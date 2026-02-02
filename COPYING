@@ -1,0 +1,18 @@
+COPYING
+
+This project is licensed under the GNU General Public License, version 3 or later (GPL-3.0-or-later). It is also additionally licensed against the Minimega license found at MINIMEGA-LICENSE.
+
+The complete license texts and applicable exceptions are provided in the following files:
+
+* LICENSE.GPL: Full text of the GNU General Public License, version 3
+* LICENSE-CORE-PROJECT: Licensing terms for the core subproject (GPL-3.0-or-later, no exceptions when used independently)
+* LICENSE-MINECRAFT-EXCEPTION: Minecraft Linking Exception applicable to the Minecraft subproject
+
+Summary of licensing structure (informative):
+
+* The core subproject, when used or distributed on its own, is licensed under GPL-3.0-or-later without exceptions.
+* When the core subproject is combined with the Minecraft subproject, it may be distributed under GPL-3.0-or-later together with the Minecraft Linking Exception, as an additional permission under section 7 of the GPL.
+* The Minecraft subproject is distributed under GPL-3.0-or-later with the Minecraft Linking Exception.
+* The build scripts and build configuration are licensed under GPL-3.0-or-later, with no additional exceptions.
+
+This file is provided for convenience only. In case of conflict, the terms of the license files listed above control.

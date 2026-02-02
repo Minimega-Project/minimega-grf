@@ -1,0 +1,38 @@
+Contributor License Agreement
+
+By submitting code, documentation, or any other contribution (the
+"Contribution") to this project, you agree to the following terms.
+
+1. Copyright Ownership
+
+You retain ownership of the copyright in your Contribution.
+
+2. License Grant to the Project Owner
+
+You hereby grant to the project owner a perpetual, worldwide,
+non-exclusive, royalty-free, irrevocable license to use, reproduce,
+modify, adapt, publish, distribute, sublicense, and otherwise exploit
+your Contribution, in whole or in part, in any form and for any purpose,
+including but not limited to use in other projects and under different
+licenses.
+
+3. Redistribution by the Project
+
+You agree that your Contribution may be redistributed as part of this
+project under the project's licenses, including the GNU General Public
+License (GPL) and any applicable exceptions.
+
+4. Original Work
+
+You represent that your Contribution is your original work, or that you
+have the right to submit it under these terms.
+
+5. No Obligation
+
+You are not obligated to provide support, updates, or maintenance for
+your Contribution.
+
+---
+
+This agreement applies to all Contributions submitted to the project,
+whether via pull request, patch, email, or any other means.

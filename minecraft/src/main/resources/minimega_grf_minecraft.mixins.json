@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.jab125.minimega.grf.minecraft.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LevelMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "minimega_grf_minecraft",
+  "version": "${version}",
+  "name": "Minimega GRF (Minecraft)",
+  "description": "Minimega GRF",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "LicenseRef-GPL-3.0-or-later-WITH-Minecraft-linking-exception",
+  "icon": "assets/minimega_grf_minecraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.jab125.minimega.grf.minecraft.ModInit",
+      "dev.jab125.minimega.grf.minecraft.testing.ModTesting"
+    ],
+    "client": [
+      "dev.jab125.minimega.grf.minecraft.client.ModInitClient"
+    ]
+  },
+  "mixins": [
+    "minimega_grf_minecraft.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

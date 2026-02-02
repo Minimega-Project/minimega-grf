@@ -1,0 +1,318 @@
+<!--
+  Copyright (C) 2026 Jab125, All rights reserved unless explicitly stated.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+  ====================================================================
+
+  "MINECRAFT" LINKING EXCEPTION TO THE GPL
+
+  Linking this mod statically or dynamically with other modules is making a
+  combined work based on this mod. Thus, the terms and conditions of the
+  GNU General Public License cover the whole combination.
+
+  In addition, as a special exception, the copyright holders of this mod
+  give you permission to combine this mod with free software programs or
+  libraries that are released under the GNU LGPL and with code included
+  in the standard release of Minecraft under All Rights Reserved (or
+  modified versions of such code, with unchanged license).
+
+  You may copy and distribute such a system following the terms of the
+  GNU General Public License for this mod and the licenses of the other
+  code concerned.
+
+  Note that people who make modified versions of this mod are not obligated
+  to grant this special exception for their modified versions; it is their
+  choice whether to do so. The GNU General Public License gives permission
+  to release a modified version without this exception; this exception also
+  makes it possible to release a modified version which carries forward
+  this exception.
+-->
+<__ROOT__>
+  <MapOptions baseSaveName="Tutorial.mcs" flatworld="false" hasBeenInCreative="0" isTutorial="true" seed="1398731794" spawnX="7" spawnY="76" spawnZ="-330">
+    <StartFeature chunkX="17" chunkZ="-7" feature="5"/>
+    <StartFeature chunkX="-20" chunkZ="-20" feature="6"/>
+    <StartFeature chunkX="18" chunkZ="14" feature="7"/>
+    <StartFeature chunkX="-9" chunkZ="0" feature="8"/>
+    <StartFeature chunkX="-17" chunkZ="-2" feature="8"/>
+    <StartFeature chunkX="-7" chunkZ="-20" feature="8"/>
+    <StartFeature chunkX="10" chunkZ="-12" feature="8"/>
+    <StartFeature chunkX="7" chunkZ="-2" feature="8"/>
+    <StartFeature chunkX="0" chunkZ="13" feature="8"/>
+    <StartFeature chunkX="-10" chunkZ="20" feature="8"/>
+    <StartFeature chunkX="9" chunkZ="19" feature="8"/>
+    <StartFeature chunkX="19" chunkZ="24" feature="8"/>
+    <StartFeature chunkX="23" chunkZ="2" feature="9"/>
+    <StartFeature chunkX="9" chunkZ="2" feature="9"/>
+    <StartFeature chunkX="-16" chunkZ="24" feature="9"/>
+    <StartFeature chunkX="-8" chunkZ="-23" feature="9"/>
+    <StartFeature chunkX="-7" chunkZ="-23" feature="9"/>
+    <StartFeature chunkX="-7" chunkZ="-22" feature="9"/>
+  </MapOptions>
+  <LevelRules>
+    <NamedArea name="tutorialArea" x0="-23" x1="40" y0="68" y1="99" z0="-372" z1="-304"/>
+    <NamedArea name="minecartArea" x0="-40" x1="-16" y0="80" y1="95" z0="-193" z1="-172"/>
+    <NamedArea name="boatArea" x0="-11" x1="-3" y0="63" y1="70" z0="-177" z1="-169"/>
+    <NamedArea name="fishingArea" x0="19" x1="26" y0="63" y1="70" z0="-177" z1="-169"/>
+    <NamedArea name="pistonArea" x0="-38" x1="-16" y0="80" y1="87" z0="-125" z1="-102"/>
+    <NamedArea name="portalArea1" x0="322" x1="339" y0="14" y1="28" z0="342" z1="355"/>
+    <NamedArea name="portalArea2" x0="11" x1="27" y0="6" y1="15" z0="24" z1="37"/>
+    <NamedArea name="brewingArea" x0="35" x1="53" y0="69" y1="79" z0="-196" z1="-176"/>
+    <NamedArea name="enchantingArea" x0="44" x1="50" y0="80" y1="93" z0="-190" z1="-179"/>
+    <NamedArea name="farmingArea" x0="-9" x1="24" y0="82" y1="89" z0="-239" z1="-224"/>
+    <NamedArea name="breedingArea" x0="31" x1="47" y0="88" y1="95" z0="-241" z1="-200"/>
+    <NamedArea name="anvilArea" x0="11" x1="24" y0="82" y1="89" z0="-217" z1="-201"/>
+    <NamedArea name="tradingArea" x0="-9" x1="4" y0="82" y1="89" z0="-217" z1="-201"/>
+    <NamedArea name="fireworksArea" x0="34" x1="40" y0="80" y1="87" z0="-181" z1="-175"/>
+    <NamedArea name="beaconArea" x0="2" x1="13" y0="68" y1="76" z0="-197" z1="-180"/>
+    <NamedArea name="hopperArea" x0="-33" x1="-20" y0="74" y1="80" z0="-121" z1="-108"/>
+    <NamedArea name="bannerArea" x0="31" x1="56" y0="80" y1="87" z0="-125" z1="-99"/>
+    <NamedArea name="elytraArea" x0="37" x1="67" y0="89" y1="122" z0="-159" z1="-138"/>
+<!--    <NamedArea name="goldElytraArea" x0="" x1="" y0="" y1="" z0="" z1=""/>-->
+<!--    <NamedArea name="emeraldElytraArea" x0="" x1="" y0="" y1="" z0="" z1=""/>-->
+<!--    <NamedArea name="diamondElytraArea" x0="" x1="" y0="" y1="" z0="" z1=""/>-->
+    <NamedArea name="conduitArea" x0="1" x1="14" y0="53" y1="68" z0="-155" z1="-142"/>
+    <NamedArea name="tridentArea" x0="-44" x1="-25" y0="89" y1="110" z0="-159" z1="-138"/>
+    <OnInitialiseWorld>
+      <PopulateContainer x="7" y="71" z="-194">
+        <AddItem itemId="minecraft:iron_ingot" quantity="5" slot="13"/>
+        <AddItem itemId="minecraft:iron_block" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:gold_block" quantity="1" slot="14"/>
+      </PopulateContainer>
+      <PopulateContainer x="46" y="89" z="-221">
+        <AddItem itemId="minecraft:wheat" quantity="10" slot="0"/>
+        <AddItem itemId="minecraft:wheat_seeds" quantity="10" slot="1"/>
+        <AddItem itemId="minecraft:carrot" quantity="10" slot="2"/>
+        <AddItem itemId="minecraft:beef" quantity="5" slot="3"/>
+        <AddItem itemId="minecraft:cod" quantity="10" slot="4"/>
+        <AddItem itemId="minecraft:bone" quantity="10" slot="5"/>
+      </PopulateContainer>
+      <PopulateContainer x="-2" y="83" z="-211">
+        <AddItem itemId="minecraft:paper" quantity="32" slot="0"/>
+        <AddItem itemId="minecraft:emerald" quantity="11" slot="1"/>
+      </PopulateContainer>
+      <PopulateContainer x="7" y="83" z="-232">
+        <AddItem itemId="minecraft:wheat_seeds" quantity="5" slot="0"/>
+        <AddItem itemId="minecraft:melon_seeds" quantity="5" slot="1"/>
+        <AddItem itemId="minecraft:pumpkin_seeds" quantity="5" slot="2"/>
+        <AddItem itemId="minecraft:beetroot_seeds" quantity="5" slot="3"/>
+        <AddItem itemId="minecraft:carrot" quantity="5" slot="4"/>
+        <AddItem itemId="minecraft:potato" quantity="5" slot="5"/>
+        <AddItem itemId="minecraft:stone_hoe" quantity="1" slot="6"/>
+        <AddItem itemId="minecraft:bone_meal" quantity="10" slot="7"/>
+      </PopulateContainer>
+      <PopulateContainer x="-28" y="81" z="-184">
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="0"/>
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="9"/>
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="18"/>
+        <AddItem itemId="minecraft:stick" quantity="1" slot="10"/>
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="2"/>
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="11"/>
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="20"/>
+        <AddItem itemId="minecraft:minecart" quantity="1" slot="3"/>
+        <AddItem itemId="minecraft:minecart" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:minecart" quantity="1" slot="21"/>
+        <AddItem itemId="minecraft:rail" quantity="16" slot="5"/>
+        <AddItem itemId="minecraft:powered_rail" quantity="6" slot="6"/>
+        <AddItem itemId="minecraft:poppy" quantity="6" slot="7"/>
+        <AddItem itemId="minecraft:activator_rail" quantity="6" slot="8"/>
+        <AddItem itemId="minecraft:gold_ingot" quantity="1" slot="15"/>
+        <AddItem itemId="minecraft:stone_pressure_plate" quantity="1" slot="16"/>
+        <AddItem itemId="minecraft:stick" quantity="1" slot="17"/>
+        <AddItem itemId="minecraft:redstone" quantity="1" slot="24"/>
+        <AddItem itemId="minecraft:redstone" quantity="1" slot="25"/>
+        <AddItem itemId="minecraft:redstone_torch" quantity="1" slot="26"/>
+      </PopulateContainer>
+<!--      broken -->
+      <PopulateContainer x="26" y="64" z="-175">
+        <AddItem itemId="minecraft:fishing_rod" quantity="1" slot="13"/>
+      </PopulateContainer>
+<!--      broken -->
+      <PopulateContainer x="-12" y="64" z="-173">
+        <AddItem itemId="minecraft:spruce_boat" quantity="1" slot="11"/>
+        <AddItem itemId="minecraft:birch_boat" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:jungle_boat" quantity="1" slot="13"/>
+        <AddItem itemId="minecraft:acacia_boat" quantity="1" slot="14"/>
+        <AddItem itemId="minecraft:dark_oak_boat" quantity="1" slot="15"/>
+      </PopulateContainer>
+      <PopulateContainer x="-12" y="64" z="-175">
+        <AddItem itemId="minecraft:oak_planks" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:wooden_shovel" quantity="1" slot="13"/>
+        <AddItem itemId="minecraft:oak_planks" quantity="1" slot="14"/>
+        <AddItem itemId="minecraft:oak_planks" quantity="1" slot="21"/>
+        <AddItem itemId="minecraft:oak_planks" quantity="1" slot="22"/>
+        <AddItem itemId="minecraft:oak_planks" quantity="1" slot="23"/>
+      </PopulateContainer>
+      <PopulateContainer x="15" y="83" z="-210">
+        <AddItem dataTag="minecraft:damage=33" itemId="minecraft:wooden_pickaxe" quantity="1" slot="0"/>
+        <AddItem dataTag="minecraft:damage=28" itemId="minecraft:golden_shovel" quantity="1" slot="1"/>
+        <AddItem dataTag="minecraft:damage=62" itemId="minecraft:iron_shovel" quantity="1" slot="2"/>
+        <AddItem itemId="minecraft:iron_ingot" quantity="1" slot="3"/>
+        <AddItem itemId="minecraft:gold_ingot" quantity="1" slot="4"/>
+        <AddItem itemId="minecraft:stone_sword" quantity="1" slot="5"/>
+        <AddItem dataTag="minecraft:enchantments={'minecraft:fire_aspect':2}" itemId="minecraft:enchanted_book" quantity="1" slot="6"/>
+        <AddItem itemId="minecraft:experience_bottle" quantity="10" slot="7"/>
+        <AddItem itemId="minecraft:name_tag" quantity="5" slot="8"/>
+        <AddItem itemId="minecraft:lava_bucket" quantity="1" slot="9"/>
+      </PopulateContainer>
+      <PopulateContainer x="37" y="81" z="-177">
+        <AddItem itemId="minecraft:gunpowder" quantity="10" slot="0"/>
+        <AddItem itemId="minecraft:glowstone_dust" quantity="10" slot="1"/>
+        <AddItem itemId="minecraft:gold_nugget" quantity="10" slot="2"/>
+        <AddItem itemId="minecraft:red_dye" quantity="10" slot="3"/>
+        <AddItem itemId="minecraft:orange_dye" quantity="10" slot="4"/>
+        <AddItem itemId="minecraft:yellow_dye" quantity="10" slot="5"/>
+        <AddItem itemId="minecraft:paper" quantity="64" slot="6"/>
+      </PopulateContainer>
+      <PopulateContainer x="42" y="75" z="-183">
+        <AddItem itemId="minecraft:glass_bottle" quantity="10" slot="0"/>
+        <AddItem itemId="minecraft:magma_cream" quantity="15" slot="1"/>
+        <AddItem itemId="minecraft:rabbit_foot" quantity="5" slot="2"/>
+        <AddItem itemId="minecraft:popped_chorus_fruit" quantity="10" slot="3"/>
+        <AddItem itemId="minecraft:blaze_powder" quantity="10" slot="4"/>
+        <AddItem itemId="minecraft:fermented_spider_eye" quantity="10" slot="5"/>
+        <AddItem itemId="minecraft:ghast_tear" quantity="10" slot="6"/>
+        <AddItem itemId="minecraft:water_bucket" quantity="1" slot="7"/>
+        <AddItem itemId="minecraft:nether_wart" quantity="10" slot="8"/>
+      </PopulateContainer>
+      <PopulateContainer x="48" y="81" z="-183">
+        <AddItem itemId="minecraft:lapis_lazuli" quantity="32" slot="0"/>
+        <AddItem itemId="minecraft:experience_bottle" quantity="32" slot="1"/>
+        <AddItem itemId="minecraft:stone_shovel" quantity="1" slot="2"/>
+        <AddItem itemId="minecraft:stone_pickaxe" quantity="1" slot="3"/>
+        <AddItem itemId="minecraft:stone_axe" quantity="1" slot="4"/>
+        <AddItem itemId="minecraft:stone_hoe" quantity="1" slot="5"/>
+        <AddItem dataTag="minecraft:enchantments={'minecraft:fortune':3}" itemId="minecraft:enchanted_book" quantity="1" slot="9"/>
+        <AddItem itemId="minecraft:iron_sword" quantity="1" slot="10"/>
+        <AddItem dataTag="minecraft:enchantments={'minecraft:efficiency':4,'minecraft:unbreaking':3,'minecraft:fortune':2}" itemId="minecraft:iron_shovel" quantity="1" slot="11"/>
+        <AddItem itemId="minecraft:diamond_sword" quantity="1" slot="19"/>
+        <AddItem dataTag="minecraft:enchantments={'minecraft:efficiency':2}" itemId="minecraft:iron_axe" quantity="1" slot="13"/>
+        <AddItem dataTag="minecraft:enchantments={'minecraft:unbreaking':1,'minecraft:efficiency':2}" itemId="minecraft:wooden_axe" quantity="1" slot="22"/>
+      </PopulateContainer>
+      <PopulateContainer x="-29" y="81" z="-116">
+        <AddItem itemId="minecraft:redstone" quantity="20" slot="0"/>
+        <AddItem itemId="minecraft:sticky_piston" quantity="10" slot="1"/>
+        <AddItem itemId="minecraft:piston" quantity="10" slot="2"/>
+        <AddItem itemId="minecraft:stone_button" quantity="5" slot="3"/>
+        <AddItem itemId="minecraft:oak_button" quantity="5" slot="4"/>
+        <AddItem itemId="minecraft:stone_pressure_plate" quantity="5" slot="5"/>
+        <AddItem itemId="minecraft:oak_pressure_plate" quantity="5" slot="6"/>
+        <AddItem itemId="minecraft:heavy_weighted_pressure_plate" quantity="5" slot="7"/>
+        <AddItem itemId="minecraft:light_weighted_pressure_plate" quantity="5" slot="8"/>
+        <AddItem itemId="minecraft:redstone_torch" quantity="10" slot="9"/>
+        <AddItem itemId="minecraft:dragon_egg" quantity="5" slot="10"/>
+        <AddItem itemId="minecraft:tripwire_hook" quantity="6" slot="11"/>
+        <AddItem itemId="minecraft:daylight_detector" quantity="2" slot="12"/>
+        <AddItem itemId="minecraft:repeater" quantity="10" slot="13"/>
+      </PopulateContainer>
+      <PopulateContainer x="48" y="81" z="-110">
+        <AddItem itemId="minecraft:red_wool" quantity="10" slot="0"/>
+        <AddItem itemId="minecraft:orange_wool" quantity="10" slot="1"/>
+        <AddItem itemId="minecraft:yellow_wool" quantity="10" slot="2"/>
+        <AddItem itemId="minecraft:lime_wool" quantity="10" slot="3"/>
+        <AddItem itemId="minecraft:light_blue_wool" quantity="10" slot="4"/>
+        <AddItem itemId="minecraft:cyan_wool" quantity="10" slot="5"/>
+        <AddItem itemId="minecraft:blue_wool" quantity="10" slot="6"/>
+        <AddItem itemId="minecraft:purple_wool" quantity="10" slot="7"/>
+        <AddItem itemId="minecraft:magenta_wool" quantity="10" slot="8"/>
+        <AddItem itemId="minecraft:pink_wool" quantity="10" slot="9"/>
+        <AddItem itemId="minecraft:white_wool" quantity="10" slot="10"/>
+        <AddItem itemId="minecraft:light_gray_wool" quantity="10" slot="11"/>
+        <AddItem itemId="minecraft:gray_wool" quantity="10" slot="12"/>
+        <AddItem itemId="minecraft:black_wool" quantity="10" slot="13"/>
+        <AddItem itemId="minecraft:green_wool" quantity="10" slot="14"/>
+        <AddItem itemId="minecraft:brown_wool" quantity="10" slot="15"/>
+        <AddItem itemId="minecraft:stick" quantity="64" slot="16"/>
+        <AddItem itemId="minecraft:creeper_head" quantity="5" slot="17"/>
+        <AddItem itemId="minecraft:wither_skeleton_skull" quantity="5" slot="18"/>
+        <AddItem itemId="minecraft:red_dye" quantity="10" slot="19"/>
+        <AddItem itemId="minecraft:orange_dye" quantity="10" slot="20"/>
+        <AddItem itemId="minecraft:yellow_dye" quantity="10" slot="21"/>
+        <AddItem itemId="minecraft:lime_dye" quantity="10" slot="22"/>
+        <AddItem itemId="minecraft:light_blue_dye" quantity="10" slot="23"/>
+        <AddItem itemId="minecraft:cyan_dye" quantity="10" slot="24"/>
+        <AddItem itemId="minecraft:lapis_lazuli" quantity="10" slot="25"/>
+        <AddItem itemId="minecraft:purple_dye" quantity="10" slot="26"/>
+        <AddItem itemId="minecraft:magenta_dye" quantity="10" slot="27"/>
+        <AddItem itemId="minecraft:pink_dye" quantity="10" slot="28"/>
+        <AddItem itemId="minecraft:light_gray_dye" quantity="10" slot="29"/>
+        <AddItem itemId="minecraft:gray_dye" quantity="10" slot="30"/>
+        <AddItem itemId="minecraft:ink_sac" quantity="10" slot="31"/>
+        <AddItem itemId="minecraft:green_dye" quantity="10" slot="32"/>
+        <AddItem itemId="minecraft:cocoa_beans" quantity="10" slot="33"/>
+        <AddItem itemId="minecraft:oxeye_daisy" quantity="5" slot="34"/>
+        <AddItem itemId="minecraft:golden_apple" quantity="1" slot="35"/>
+      </PopulateContainer>
+      <PopulateContainer x="46" y="81" z="-108">
+        <AddItem itemId="minecraft:red_banner" quantity="1" slot="9"/>
+        <AddItem itemId="minecraft:orange_banner" quantity="1" slot="10"/>
+        <AddItem itemId="minecraft:yellow_banner" quantity="1" slot="11"/>
+        <AddItem itemId="minecraft:lime_banner" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:green_banner" quantity="1" slot="13"/>
+        <AddItem itemId="minecraft:light_blue_banner" quantity="1" slot="14"/>
+        <AddItem itemId="minecraft:purple_banner" quantity="1" slot="15"/>
+        <AddItem itemId="minecraft:pink_banner" quantity="1" slot="16"/>
+        <AddItem itemId="minecraft:white_banner" quantity="1" slot="17"/>
+      </PopulateContainer>
+      <PopulateContainer x="55" y="90" z="-149">
+        <AddItem dataTag="minecraft:damage=100" itemId="minecraft:elytra" quantity="1" slot="13"/>
+        <AddItem itemId="minecraft:experience_bottle" quantity="10" slot="25"/>
+        <AddItem itemId="minecraft:phantom_membrane" quantity="10" slot="26"/>
+      </PopulateContainer>
+      <PopulateContainer x="-29" y="90" z="-149">
+        <AddItem itemId="minecraft:trident" quantity="1" slot="11"/>
+        <AddItem itemId="minecraft:trident" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:trident" quantity="1" slot="13"/>
+        <AddItem itemId="minecraft:trident" quantity="1" slot="14"/>
+        <AddItem itemId="minecraft:trident" quantity="1" slot="15"/>
+        <AddItem itemId="minecraft:experience_bottle" quantity="32" slot="4"/>
+        <AddItem itemId="minecraft:experience_bottle" quantity="32" slot="22"/>
+        <AddItem dataTag="minecraft:stored_enchantments={'minecraft:riptide':3}" itemId="minecraft:enchanted_book" quantity="1" slot="3"/>
+        <AddItem dataTag="minecraft:stored_enchantments={'minecraft:impaling':5}" itemId="minecraft:enchanted_book" quantity="1" slot="5"/>
+        <AddItem dataTag="minecraft:stored_enchantments={'minecraft:channeling':1}" itemId="minecraft:enchanted_book" quantity="1" slot="21"/>
+        <AddItem dataTag="minecraft:stored_enchantments={'minecraft:loyalty':3}" itemId="minecraft:enchanted_book" quantity="1" slot="23"/>
+      </PopulateContainer>
+      <PopulateContainer x="7" y="64" z="-152">
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="3"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="4"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="5"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="12"/>
+        <AddItem itemId="minecraft:heart_of_the_sea" quantity="1" slot="13"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="14"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="21"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="22"/>
+        <AddItem itemId="minecraft:nautilus_shell" quantity="1" slot="23"/>
+        <AddItem itemId="minecraft:stone_axe" quantity="1" slot="10"/>
+        <AddItem itemId="minecraft:stone_axe" quantity="1" slot="16"/>
+      </PopulateContainer>
+    </OnInitialiseWorld>
+    <UpdatePlayer food="12" health="12" spawnX="7" spawnY="76" spawnZ="-330" yRot="0">
+      <AddItem itemId="minecraft:cooked_beef" quantity="1" slot="10"/>
+    </UpdatePlayer>
+    <CompleteAll descriptionName="IDS_COLLECTED_MUSIC_DISCS" goalType="1">
+      <CollectItem dataTag="minecraft:custom_data={dataTag:1}" itemId="minecraft:music_disc_13" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:2}" itemId="minecraft:music_disc_cat" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:3}" itemId="minecraft:music_disc_blocks" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:4}" itemId="minecraft:music_disc_wait" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:5}" itemId="minecraft:music_disc_mellohi" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:6}" itemId="minecraft:music_disc_stal" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:7}" itemId="minecraft:music_disc_far" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:8}" itemId="minecraft:music_disc_mall" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:9}" itemId="minecraft:music_disc_chirp" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:10}" itemId="minecraft:music_disc_strad" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:11}" itemId="minecraft:music_disc_ward" quantity="1"/>
+      <CollectItem dataTag="minecraft:custom_data={dataTag:12}" itemId="minecraft:music_disc_11" quantity="1"/>
+    </CompleteAll>
+  </LevelRules>
+</__ROOT__>

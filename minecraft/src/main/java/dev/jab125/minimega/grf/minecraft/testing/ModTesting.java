@@ -55,6 +55,7 @@ import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -80,41 +81,35 @@ public class ModTesting implements ModInitializer {
 		}
 
 		Events.ENTERED_NAMED_AREA.register((player, area) -> {
-			//System.out.println("EVENT CALLED");
 			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name) + "."));
 
 			if (area == null) return;
 			AABB aabb = new AABB(area.x0, area.y0, area.z0, area.x1, area.y1, area.z1);
-			for (PopulateContainer populateContainer : ((GrfContainer) player.level()).getGrf().getLevelRules().flatStreamOf(PopulateContainer.class).toList()) {
-				if (aabb.contains(populateContainer.x + 0.5, populateContainer.y + 0.5, populateContainer.z + 0.5)) {
-					//	System.out.println("ITS INSIDE");
-					BlockEntity blockEntity = player.level().getBlockEntity(new BlockPos(populateContainer.x, populateContainer.y, populateContainer.z));
-					if (blockEntity instanceof Container container) {
-						//		System.out.println("IT IS A CONTAINER");
-						ItemParser itemParser = new ItemParser(player.registryAccess());
-						for (AddItem addItem : populateContainer.getAddItems()) {
-							//System.out.println(addItem);
-							ItemParser.ItemResult parse = null;
-							try {
-								parse = itemParser.parse(new StringReader(addItem.itemId + "[" + addItem.dataTag + "]"));
-							} catch (CommandSyntaxException e) {
-								throw new RuntimeException(e);
-							}
-							try {
-								//	System.out.println("Setting " + addItem.slot);
-								ItemStack itemStack = new ItemInput(parse.item(), parse.components()).createItemStack(addItem.quantity, false);
-								if (container.getContainerSize() > addItem.slot /*container.canPlaceItem(addItem.slot, itemStack)*/) {
-
+			ServerLevel level = player.level();
+			((GrfContainer) level).getGrf().getLevelRules().flatStreamOf(PopulateContainer.class).filter(populateContainer -> aabb.contains(populateContainer.x + 0.5, populateContainer.y + 0.5, populateContainer.z + 0.5)).forEach(populateContainer -> {
+						BlockEntity blockEntity = level.getBlockEntity(new BlockPos(populateContainer.x, populateContainer.y, populateContainer.z));
+						if (blockEntity instanceof Container container) {
+							container.clearContent();
+							ItemParser itemParser = new ItemParser(player.registryAccess());
+							for (AddItem addItem : populateContainer.getAddItems()) {
+								ItemParser.ItemResult parse;
+								try {
+									parse = itemParser.parse(new StringReader(addItem.itemId + "[" + addItem.dataTag + "]"));
+								} catch (CommandSyntaxException e) {
+									throw new RuntimeException(e);
+								}
+								ItemStack itemStack;
+								try {
+									itemStack = new ItemInput(parse.item(), parse.components()).createItemStack(addItem.quantity, false);
+								} catch (CommandSyntaxException e) {
+									throw new RuntimeException(e);
+								}
+								if (container.getContainerSize() > addItem.slot && addItem.slot >= 0) {
 									container.setItem(addItem.slot, itemStack);
 								}
-							} catch (CommandSyntaxException e) {
-								throw new RuntimeException(e);
 							}
 						}
-					}
-
-				}
-			}
+					});
 		});
 
 	}

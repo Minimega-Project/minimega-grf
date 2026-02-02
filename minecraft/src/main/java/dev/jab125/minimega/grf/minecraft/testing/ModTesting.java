@@ -70,7 +70,7 @@ public class ModTesting implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		try {
-			root = (__ROOT__) Element.fromXML(ModInit.class.getResourceAsStream("/tutorial-flattened.xml"));
+			root = (__ROOT__) Element.fromXML(ModInit.class.getResourceAsStream("/tutorial.xml"));
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {

@@ -4,9 +4,11 @@
   "package": "dev.jab125.minimega.grf.minecraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LevelMixin"
+    "LevelMixin",
+    "ServerLevelMixin"
   ],
   "client": [
+    "ClientLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

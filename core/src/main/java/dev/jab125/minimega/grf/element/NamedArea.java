@@ -97,7 +97,7 @@ public final class NamedArea extends Element {
 			org.w3c.dom.Element element = document.createElement(self.getId());
 
 			element.setAttribute("name", self.name);
-			element.setAttribute("dataTag", Integer.toString(self.dataTag));
+			if (self.dataTag != -1) element.setAttribute("dataTag", Integer.toString(self.dataTag));
 			element.setAttribute("x0", Integer.toString(self.x0));
 			element.setAttribute("x1", Integer.toString(self.x1));
 			if (self.y0 != 0) element.setAttribute("y0", Integer.toString(self.y0));

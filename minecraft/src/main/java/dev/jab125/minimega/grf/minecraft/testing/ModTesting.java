@@ -65,26 +65,29 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
+import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
+
 public class ModTesting implements ModInitializer {
-	public static __ROOT__ root;
+	//public static __ROOT__ root;
 
 	@Override
 	public void onInitialize() {
-		try {
-			root = (__ROOT__) Element.fromXML(ModInit.class.getResourceAsStream("/tutorial.xml"));
-		} catch (ParserConfigurationException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (SAXException e) {
-			throw new RuntimeException(e);
-		}
+		if (true) return;
+//		try {
+//			root = (__ROOT__) Element.fromXML(ModInit.class.getResourceAsStream("/tutorial.xml"));
+//		} catch (ParserConfigurationException e) {
+//			throw new RuntimeException(e);
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		} catch (SAXException e) {
+//			throw new RuntimeException(e);
+//		}
 
 		Events.ENTERED_NAMED_AREA.register((player, area) -> {
 			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name) + "."));
 
 			if (area == null) return;
-			AABB aabb = new AABB(area.x0, area.y0, area.z0, area.x1, area.y1, area.z1);
+			AABB aabb = fromNamedArea(area);
 			ServerLevel level = player.level();
 			((GrfContainer) level).getGrf().getLevelRules().flatStreamOf(PopulateContainer.class).filter(populateContainer -> aabb.contains(populateContainer.x + 0.5, populateContainer.y + 0.5, populateContainer.z + 0.5)).forEach(populateContainer -> {
 						BlockEntity blockEntity = level.getBlockEntity(new BlockPos(populateContainer.x, populateContainer.y, populateContainer.z));

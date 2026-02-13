@@ -53,7 +53,7 @@ public class LevelMixin implements GrfContainer {
 	public __ROOT__ getGrf() {
 		//if ((Object) this instanceof ServerLevel level) {
 		//	if ("Tutorial".equals(level.getServer().getWorldData().getLevelName())) {
-				return ModTesting.root;
+				return null;
 		//	}
 		//}
 		//return new __ROOT__(List.of());

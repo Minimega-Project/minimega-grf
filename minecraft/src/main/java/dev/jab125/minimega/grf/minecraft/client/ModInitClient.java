@@ -41,40 +41,86 @@
  */
 package dev.jab125.minimega.grf.minecraft.client;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dev.jab125.minimega.grf.GrfContainer;
+import dev.jab125.minimega.grf.Json2XmlConverter;
+import dev.jab125.minimega.grf.element.Element;
+import dev.jab125.minimega.grf.element.ElementType;
 import dev.jab125.minimega.grf.element.LevelRules;
 import dev.jab125.minimega.grf.element.NamedArea;
+import dev.jab125.minimega.grf.element.__ROOT__;
+import dev.jab125.minimega.grf.minecraft.GRFStreamCodecs;
+import dev.jab125.minimega.grf.minecraft.ServerLevelExtension;
+import dev.jab125.minimega.grf.minecraft.networking.GameRuleFilePayload;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
-import net.minecraft.client.renderer.RenderType;
+//import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.debug.DebugRenderer;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.gizmos.TextGizmo;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
+
 public class ModInitClient implements ClientModInitializer {
+	public static __ROOT__ currentDimensionGrf;
 	@Override
 	public void onInitializeClient() {
 		RenderStateDataKey<List<NamedArea>> namedAreasDataKey = RenderStateDataKey.create(() -> "Named Areas Data Key");
-		WorldRenderEvents.END_EXTRACTION.register(context -> {
-			context.worldState().setData(namedAreasDataKey, ((GrfContainer) context.world()).getGrf().getFirstOf(LevelRules.class).map(f -> f.streamOf(NamedArea.class).toList()).orElseGet(List::of));
-		});
-		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(context -> {
-			if (!Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) return;
-			List<NamedArea> data = context.worldState().getData(namedAreasDataKey);
-			if (data == null) return;
-			for (NamedArea namedArea : data) {
-				AABB aabb = new AABB(namedArea.x0, namedArea.y0, namedArea.z0, namedArea.x1, namedArea.y1, namedArea.z1);
-				Vec3 center = aabb.getCenter();
+		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(worldRenderContext -> {
 
-				DebugRenderer.renderFloatingText(context.matrices(), context.consumers(), namedArea.name, center.x, center.y, center.z, 0xffffffff);
-				ShapeRenderer.renderLineBox(context.matrices().last(), context.consumers().getBuffer(RenderType.lines()), aabb.move(context.gameRenderer().getMainCamera().position().multiply(-1, -1, -1)), 1, 1, 1, 1);
+			//Gizmos.cuboid()
+		});
+		WorldRenderEvents.END_EXTRACTION.register(context -> {
+			//context.worldState().setData(namedAreasDataKey, ().orElseGet(List::of));
+			__ROOT__ grf = ((GrfContainer) context.world()).getGrf();
+			if (grf == null) return;
+			for (NamedArea namedArea : grf.getLevelRules().streamOf(NamedArea.class).toList()) {
+				AABB aabb = fromNamedArea(namedArea);
+				Gizmos.cuboid(aabb, GizmoStyle.stroke(0xffffffff));
+				Gizmos.billboardText(namedArea.name, aabb.getCenter(), TextGizmo.Style.whiteAndCentered());
 			}
 		});
+
+		ClientPlayNetworking.registerGlobalReceiver(GameRuleFilePayload.TYPE, (payload, context) -> {
+			currentDimensionGrf = payload.root().orElse(null);
+		});
+
+
+//		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(context -> {
+//			if (!Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) return;
+//			List<NamedArea> data = context.worldState().getData(namedAreasDataKey);
+//			if (data == null) return;
+//			for (NamedArea namedArea : data) {
+//				AABB aabb = new AABB(namedArea.x0, namedArea.y0, namedArea.z0, namedArea.x1, namedArea.y1, namedArea.z1);
+//				Vec3 center = aabb.getCenter();
+//
+//				DebugRenderer.renderFloatingText(context.matrices(), context.consumers(), namedArea.name, center.x, center.y, center.z, 0xffffffff);
+//				ShapeRenderer.renderLineBox(context.matrices().last(), context.consumers().getBuffer(RenderType.lines()), aabb.move(context.gameRenderer().getMainCamera().position().multiply(-1, -1, -1)), 1, 1, 1, 1);
+//			}
+//		});
 	}
 }

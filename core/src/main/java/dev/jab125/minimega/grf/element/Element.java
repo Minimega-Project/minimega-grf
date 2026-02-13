@@ -44,6 +44,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -153,6 +154,10 @@ public abstract sealed class Element implements Iterable<Element> permits Active
 	@Override
 	public Iterator<Element> iterator() {
 		return elementList.iterator();
+	}
+
+	public List<Element> getChildren() {
+		return Collections.unmodifiableList(elementList);
 	}
 
 	public Stream<Element> stream() {

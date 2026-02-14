@@ -72,7 +72,7 @@ public class ModTesting implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		if (true) return;
+		//if (true) return;
 //		try {
 //			root = (__ROOT__) Element.fromXML(ModInit.class.getResourceAsStream("/tutorial.xml"));
 //		} catch (ParserConfigurationException e) {
@@ -84,7 +84,7 @@ public class ModTesting implements ModInitializer {
 //		}
 
 		Events.ENTERED_NAMED_AREA.register((player, area) -> {
-			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name) + "."));
+			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
 
 			if (area == null) return;
 			AABB aabb = fromNamedArea(area);

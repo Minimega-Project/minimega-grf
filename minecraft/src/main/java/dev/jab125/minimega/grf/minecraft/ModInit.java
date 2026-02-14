@@ -48,6 +48,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.jab125.minimega.grf.GrfContainer;
 import dev.jab125.minimega.grf.Json2XmlConverter;
 import dev.jab125.minimega.grf.element.Element;
@@ -72,17 +75,24 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.commands.FillCommand;
+import net.minecraft.server.commands.TeleportCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -93,8 +103,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public class ModInit implements ModInitializer {
 	public static final AttachmentType<NamedArea> CURRENT_NAMED_AREA = AttachmentRegistry.create(Identifier.parse("minimega_grf:cna"));
@@ -172,26 +185,85 @@ public class ModInit implements ModInitializer {
 							.then(Commands.argument("from", BlockPosArgument.blockPos())
 									.then(Commands.argument("to", BlockPosArgument.blockPos())
 											.then(Commands.argument("name", StringArgumentType.word())
-													.executes(context1 -> switch (NamedAreaUtils.addNamedArea((RootHolder) context1.getSource().getLevel(), construct(context1, false))) {
-														case SUCCESS -> 0;
-														case ERROR_DUPLICATE -> 1;
-														case ERROR_NONE_FOUND -> 2;
-													})
+													.executes(namedAreaAddCommand(false))
 													.then(Commands.argument("dataTag", IntegerArgumentType.integer())
-															.executes(context1 -> switch (NamedAreaUtils.addNamedArea((RootHolder) context1.getSource().getLevel(), construct(context1, true))) {
-																case SUCCESS -> 0;
-																case ERROR_DUPLICATE -> 1;
-																case ERROR_NONE_FOUND -> 2;
-															}))))))
-					.then(Commands.literal("remove").then(Commands.argument("name", StringArgumentType.word()).executes(
-							context1 -> switch (NamedAreaUtils.removeNamedArea((RootHolder) context1.getSource().getLevel(), StringArgumentType.getString(context1, "name"))) {
-								case SUCCESS -> 0;
-								case ERROR_DUPLICATE -> 1;
-								case ERROR_NONE_FOUND -> 2;
-							})
-					));
+															.executes(namedAreaAddCommand(true)))))))
+					.then(Commands.literal("remove")
+							.then(Commands.argument("name", StringArgumentType.word())
+									.suggests((context2, builder) -> {
+										__ROOT__ root = ((RootHolder) context2.getSource().getLevel()).getRoot();
+										if (root == null) return Suggestions.empty();
+										return SharedSuggestionProvider.suggest(root.getLevelRules().streamOf(NamedArea.class).map(a -> a.name), builder);
+									})
+									.executes(
+											context1 -> {
+												String string = StringArgumentType.getString(context1, "name");
+												var result = switch (NamedAreaUtils.removeNamedArea((RootHolder) context1.getSource().getLevel(), string)) {
+													case SUCCESS -> 0;
+													case ERROR_DUPLICATE -> 1;
+													case ERROR_NONE_FOUND -> 2;
+												};
+												if (result == 0) {
+													context1.getSource().sendSuccess(() -> Component.literal("Removed named area \"%s\"".formatted(string)), true);
+												} else if (result == 1) {
+													context1.getSource().sendFailure(Component.literal("A named area with the name \"%s\" already exists!".formatted(string)));
+												} else {
+													context1.getSource().sendFailure(Component.literal("No named area with the name \"%s\" exists!".formatted(string)));
+												}
+												return result;
+											})
+							))
+					.then(Commands.literal("list").executes(context1 -> {
+						__ROOT__ root = ((RootHolder) context1.getSource().getLevel()).getRoot();
+						int count = (int) root.getLevelRules().streamOf(NamedArea.class).count();
+						String join = String.join(", ", root.getLevelRules().streamOf(NamedArea.class).map(a -> a.name).toList());
+						context1.getSource().sendSuccess(() -> Component.literal("Found %s named areas:".formatted(count)), false);
+						context1.getSource().sendSuccess(() -> Component.literal(join), false);
+						return count;
+					}))
+					.then(Commands.literal("teleport")
+							.then(Commands.argument("name", StringArgumentType.word())
+									.suggests((context2, builder) -> {
+										__ROOT__ root = ((RootHolder) context2.getSource().getLevel()).getRoot();
+										if (root == null) return Suggestions.empty();
+										return SharedSuggestionProvider.suggest(root.getLevelRules().streamOf(NamedArea.class).map(a -> a.name), builder);
+									})
+									.executes(context1 -> {
+										String string = StringArgumentType.getString(context1, "name");
+										__ROOT__ root = ((RootHolder) context1.getSource().getLevel()).getRoot();
+										Optional<NamedArea> first = root.getLevelRules().streamOf(NamedArea.class).filter(a -> string.equals(a.name)).findFirst();
+										if (first.isPresent()) {
+											Vec3 center = fromNamedArea(first.get()).getCenter();
+											Entity entityOrException = context1.getSource().getEntityOrException();
+											entityOrException.teleportTo(context1.getSource().getLevel(), center.x, center.y, center.z, EnumSet.noneOf(Relative.class), entityOrException.getXRot(), entityOrException.getYRot(), true);
+											context1.getSource().sendSuccess(() -> Component.translatable("commands.teleport.success.entity.single", entityOrException.getDisplayName(), "named area \"" + string + "\""), true);
+											return 0;
+										} else {
+											context1.getSource().sendFailure(Component.literal("No named area with that name!"));
+											return 1;
+										}
+									})));
 			dispatcher.register(grf);
 		});
+	}
+
+	private @NonNull Command<CommandSourceStack> namedAreaAddCommand(boolean hasDataTag) {
+		return context1 -> {
+			String string = StringArgumentType.getString(context1, "name");
+			var result = switch (NamedAreaUtils.addNamedArea((RootHolder) context1.getSource().getLevel(), construct(context1, hasDataTag))) {
+				case SUCCESS -> 0;
+				case ERROR_DUPLICATE -> 1;
+				case ERROR_NONE_FOUND -> 2;
+			};
+			if (result == 0) {
+				context1.getSource().sendSuccess(() -> Component.literal("Created named area \"%s\"".formatted(string)), true);
+			} else if (result == 1) {
+				context1.getSource().sendFailure(Component.literal("A named area with the name \"%s\" already exists!".formatted(string)));
+			} else {
+				context1.getSource().sendFailure(Component.literal("No named area with the name \"%s\" exists!".formatted(string)));
+			}
+			return result;
+		};
 	}
 
 	private NamedArea construct(CommandContext<CommandSourceStack> context, boolean hasDataTag) {

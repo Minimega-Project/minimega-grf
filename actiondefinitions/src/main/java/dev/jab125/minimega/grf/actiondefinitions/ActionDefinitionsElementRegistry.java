@@ -10,12 +10,15 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("Always", new Always.Type());
 		register("AppendToDialog", new AppendToDialog.Type());
 		register("Cancel", new Cancel.Type());
+		register("ContinueText", new ContinueText.Type());
+		register("CurrentNamedArea", new CurrentNamedArea.Type());
 		register("Delay", new Delay.Type());
 		register("Dialog", new Dialog.Type());
 		register("DialogSequence", new DialogSequence.Type());
 		register("Effects", new Effects.Type());
 		register("EnteredNamedArea", new EnteredNamedArea.Type());
 		register("ExitDialogSequence", new ExitDialogSequence.Type());
+		register("HardcodedStatusMessage", new HardcodedStatusMessage.Type());
 		register("Log", new Log.Type());
 		register("Not", new Not.Type());
 		register("OnActions", new OnActions.Type());

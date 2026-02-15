@@ -33,6 +33,36 @@
  */
 package dev.jab125.minimega.grf.actiondefinitions.element;
 
-public sealed interface Effect permits AppendToDialog, ContinueText, Delay, Dialog, DialogSequence, ExitDialogSequence, HardcodedStatusMessage, Log, PopulateAllContainersInsideOfNamedArea, ProceedCancel {
+import dev.jab125.minimega.grf.element.Element;
+import org.w3c.dom.Document;
 
+import java.util.List;
+
+public final class ContinueText extends ACElement implements Effect {
+	public ContinueText(List<Element> children) {
+		super(children);
+	}
+	@Override
+	public String getId() {
+		return "ContinueText";
+	}
+
+	public static class Type implements ACType<ContinueText> {
+		@Override
+		public ContinueText parseSelf(org.w3c.dom.Element element, List<Element> children) {
+			return new ContinueText(children);
+		}
+
+		@Override
+		public org.w3c.dom.Element serializeSelf(
+				Document document,
+				ContinueText self,
+				List<org.w3c.dom.Element> children
+		) {
+			org.w3c.dom.Element element = document.createElement(self.getId());
+			children.forEach(element::appendChild);
+
+			return element;
+		}
+	}
 }

@@ -1,11 +1,13 @@
 package dev.jab125.minimega.grf.actiondefinitions;
 
 import dev.jab125.minimega.grf.actiondefinitions.element.AppendToDialog;
+import dev.jab125.minimega.grf.actiondefinitions.element.ContinueText;
 import dev.jab125.minimega.grf.actiondefinitions.element.Delay;
 import dev.jab125.minimega.grf.actiondefinitions.element.Dialog;
 import dev.jab125.minimega.grf.actiondefinitions.element.DialogSequence;
 import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
 import dev.jab125.minimega.grf.actiondefinitions.element.ExitDialogSequence;
+import dev.jab125.minimega.grf.actiondefinitions.element.HardcodedStatusMessage;
 import dev.jab125.minimega.grf.actiondefinitions.element.Log;
 import dev.jab125.minimega.grf.actiondefinitions.element.PopulateAllContainersInsideOfNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ProceedCancel;
@@ -22,6 +24,7 @@ public class ActionRuntime {
 	private boolean awaitingUserInput;
 	private ProceedCancel proceedCancel;
 	private final Context context;
+	private int stop;
 
 	public ActionRuntime(List<Effect> effects, Context context) {
 		this.effects = new ArrayList<>(effects);
@@ -32,6 +35,10 @@ public class ActionRuntime {
 	public boolean evaluate() {
 		if (exited) return false;
 		if (suspended) return true;
+		if (stop > 0) {
+			stop--;
+			return true;
+		}
 		while (cursor < effects.size()) {
 			try {
 //					try {
@@ -44,7 +51,11 @@ public class ActionRuntime {
 					case AppendToDialog appendToDialog -> {
 						context.appendDialog(appendToDialog.text);
 					}
+					case ContinueText continueText -> {
+						context.appendDialog("Press {y} to continue.");
+					}
 					case Delay ignored -> {
+						stop = 40;
 						return true;
 					}
 					case Dialog dialog -> {
@@ -59,6 +70,7 @@ public class ActionRuntime {
 						exited = true;
 						return false;
 					}
+					case HardcodedStatusMessage ignored -> context.hardcodedStatusMessage();
 					case Log log -> context.log(log.text);
 					case PopulateAllContainersInsideOfNamedArea ignored ->
 							context.populateAllContainersInsideOfNamedArea();

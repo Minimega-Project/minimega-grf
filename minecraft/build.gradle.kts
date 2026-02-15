@@ -64,6 +64,8 @@ dependencies {
 
     implementation(project(":core"))
     include(project(":core"))
+    implementation(project(":actiondefinitions"))
+    include(project(":actiondefinitions"))
 }
 
 

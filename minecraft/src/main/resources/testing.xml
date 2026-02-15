@@ -1,0 +1,107 @@
+<ActionDefinitions>
+    <OnActions>
+        <EnteredNamedArea>
+            <Trigger>
+                <Always/>
+            </Trigger>
+            <Effects>
+                <HardcodedStatusMessage/>
+                <PopulateAllContainersInsideOfNamedArea/>
+            </Effects>
+        </EnteredNamedArea>
+        <!-- Beacon tutorial -->
+        <EnteredNamedArea>
+            <Trigger>
+                <CurrentNamedArea>beaconArea</CurrentNamedArea>
+            </Trigger>
+            <Effects>
+                <DialogSequence>
+                    <Dialog>
+                        At this top of this pyramid there is a Beacon.
+                    </Dialog>
+                    <Delay/>
+                    <AppendToDialog>
+                        Press [A] to learn more about Beacons.
+                        Press [B] if you already know about beacons.
+                    </AppendToDialog>
+                    <ProceedCancel>
+                        <Cancel>
+                            <Log>
+                                Exiting dialog sequence
+                            </Log>
+                            <ExitDialogSequence/>
+                        </Cancel>
+                    </ProceedCancel>
+                    <Dialog>
+                        Proceeding with tutorial,
+                        This a new dialog box, replacing the old dialog
+                    </Dialog>
+                </DialogSequence>
+            </Effects>
+        </EnteredNamedArea>
+        <!-- Conduit tutorial -->
+        <EnteredNamedArea>
+            <Trigger>
+                <!--<All>-->
+                    <!--<Not>-->
+                        <!--<CompletedTutorial>conduitTutorial</CompletedTutorial>-->
+                    <!--</Not>-->
+                    <CurrentNamedArea>conduitArea</CurrentNamedArea>
+                <!--</All>-->
+            </Trigger>
+            <Effects>
+                <!--<PopulateAllContainersInsideOfNamedArea/>-->
+                <DialogSequence>
+                    <Dialog>
+                        This area will teach you all about Conduits.
+                    </Dialog>
+                    <Delay/>
+                    <AppendToDialog>
+                        Press {y} to learn more about Conduits.
+                        Press {n} if you already know about Conduits.
+                    </AppendToDialog>
+                    <ProceedCancel>
+                        <Cancel>
+                            <Log>
+                                Exiting dialog sequence
+                            </Log>
+                            <ExitDialogSequence/>
+                        </Cancel>
+                    </ProceedCancel>
+                    <Dialog>
+                        Conduits provide players with a powerful Status Effect when they are underwater or in the rain, but they can be quite complicated to build.
+                    </Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <Dialog>
+                        The chest in the area has everything you need to craft a Conduit; eight Nautilus Shells and one Heart of the Sea.
+                    </Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <Dialog>
+                        A Conduit will only activate when it is underwater, and fully surrounded by water (even diagonally).
+                    </Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <Dialog>
+                        A Conduit must be placed within a frame made of Prismarine, Dark Prismarine, Prismarine Bricks, and/or Sea Lanterns.
+                        There's a frame in the water nearby.
+                    </Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <Dialog>
+                        Try crafting a Conduit, placing it on the wooden planks in the centre of the frame, then removing the planks.
+                    </Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <!--<CompleteTutorial>conduitTutorial</CompleteTutorial>-->
+                </DialogSequence>
+            </Effects>
+        </EnteredNamedArea>
+    </OnActions>
+</ActionDefinitions>

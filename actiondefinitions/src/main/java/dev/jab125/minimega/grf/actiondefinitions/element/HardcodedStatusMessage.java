@@ -33,6 +33,36 @@
  */
 package dev.jab125.minimega.grf.actiondefinitions.element;
 
-public sealed interface Effect permits AppendToDialog, ContinueText, Delay, Dialog, DialogSequence, ExitDialogSequence, HardcodedStatusMessage, Log, PopulateAllContainersInsideOfNamedArea, ProceedCancel {
+import dev.jab125.minimega.grf.element.Element;
+import org.w3c.dom.Document;
 
+import java.util.List;
+
+public final class HardcodedStatusMessage extends ACElement implements Effect {
+	public HardcodedStatusMessage(List<Element> children) {
+		super(children);
+	}
+	@Override
+	public String getId() {
+		return "HardcodedStatusMessage";
+	}
+
+	public static class Type implements ACType<HardcodedStatusMessage> {
+		@Override
+		public HardcodedStatusMessage parseSelf(org.w3c.dom.Element element, List<Element> children) {
+			return new HardcodedStatusMessage(children);
+		}
+
+		@Override
+		public org.w3c.dom.Element serializeSelf(
+				Document document,
+				HardcodedStatusMessage self,
+				List<org.w3c.dom.Element> children
+		) {
+			org.w3c.dom.Element element = document.createElement(self.getId());
+			children.forEach(element::appendChild);
+
+			return element;
+		}
+	}
 }

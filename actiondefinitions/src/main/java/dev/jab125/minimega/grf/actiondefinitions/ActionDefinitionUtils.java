@@ -81,6 +81,11 @@ public class ActionDefinitionUtils {
 				System.out.println("APPENDED DIALOG: " + activeDialog);
 			}
 
+			@Override
+			public void hardcodedStatusMessage() {
+
+			}
+
 //			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);

@@ -44,18 +44,35 @@ package dev.jab125.minimega.grf.minecraft.testing;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.jab125.minimega.grf.GrfContainer;
+import dev.jab125.minimega.grf.actiondefinitions.ActionDefinitionUtils;
+import dev.jab125.minimega.grf.actiondefinitions.ActionDefinitionsElementRegistry;
+import dev.jab125.minimega.grf.actiondefinitions.ActionRuntime;
+import dev.jab125.minimega.grf.actiondefinitions.Context;
+import dev.jab125.minimega.grf.actiondefinitions.element.ActionDefinitions;
+import dev.jab125.minimega.grf.actiondefinitions.element.Cancel;
+import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
+import dev.jab125.minimega.grf.actiondefinitions.element.Effects;
+import dev.jab125.minimega.grf.actiondefinitions.element.EnteredNamedArea;
+import dev.jab125.minimega.grf.actiondefinitions.element.ITrigger;
+import dev.jab125.minimega.grf.actiondefinitions.element.Proceed;
 import dev.jab125.minimega.grf.element.AddItem;
 import dev.jab125.minimega.grf.element.Element;
+import dev.jab125.minimega.grf.element.NamedArea;
 import dev.jab125.minimega.grf.element.PopulateContainer;
 import dev.jab125.minimega.grf.element.__ROOT__;
 import dev.jab125.minimega.grf.minecraft.ModInit;
 import dev.jab125.minimega.grf.minecraft.event.Events;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -64,14 +81,20 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
 
 public class ModTesting implements ModInitializer {
 	//public static __ROOT__ root;
 
+	public static ActionDefinitions actionDefinitions;
+	public static Runtime runtime;
 	@Override
 	public void onInitialize() {
+		runtime = new Runtime();
 		//if (true) return;
 //		try {
 //			root = (__ROOT__) Element.fromXML(ModInit.class.getResourceAsStream("/tutorial.xml"));
@@ -83,37 +106,159 @@ public class ModTesting implements ModInitializer {
 //			throw new RuntimeException(e);
 //		}
 
-		Events.ENTERED_NAMED_AREA.register((player, area) -> {
-			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
+//		Events.ENTERED_NAMED_AREA.register((player, area) -> {
+//			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
+//
+//			poplulateContainersInsideOfNamedArea(player, area);
+//		});
 
-			if (area == null) return;
-			AABB aabb = fromNamedArea(area);
-			ServerLevel level = player.level();
-			((GrfContainer) level).getGrf().getLevelRules().flatStreamOf(PopulateContainer.class).filter(populateContainer -> aabb.contains(populateContainer.x + 0.5, populateContainer.y + 0.5, populateContainer.z + 0.5)).forEach(populateContainer -> {
-						BlockEntity blockEntity = level.getBlockEntity(new BlockPos(populateContainer.x, populateContainer.y, populateContainer.z));
-						if (blockEntity instanceof Container container) {
-							container.clearContent();
-							ItemParser itemParser = new ItemParser(player.registryAccess());
-							for (AddItem addItem : populateContainer.getAddItems()) {
-								ItemParser.ItemResult parse;
-								try {
-									parse = itemParser.parse(new StringReader(addItem.itemId + "[" + addItem.dataTag + "]"));
-								} catch (CommandSyntaxException e) {
-									throw new RuntimeException(e);
-								}
-								ItemStack itemStack;
-								try {
-									itemStack = new ItemInput(parse.item(), parse.components()).createItemStack(addItem.quantity, false);
-								} catch (CommandSyntaxException e) {
-									throw new RuntimeException(e);
-								}
-								if (container.getContainerSize() > addItem.slot && addItem.slot >= 0) {
-									container.setItem(addItem.slot, itemStack);
-								}
+
+		try {
+			actionDefinitions = (ActionDefinitions) Element.fromXML(ModTesting.class.getResourceAsStream("/testing.xml"), ActionDefinitionsElementRegistry.REGISTRY);
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (SAXException e) {
+			throw new RuntimeException(e);
+		}
+
+		Events.ENTERED_NAMED_AREA.register((player, area) -> {
+			List<EnteredNamedArea> list = actionDefinitions.getOnActions().streamOf(EnteredNamedArea.class).toList();
+			for (EnteredNamedArea enteredNamedArea : list) {
+				var context = new Context() {
+
+					@Override
+					public void runAsync(ActionRuntime runtime) {
+						ModTesting.runtime.addRuntime(runtime);
+					}
+
+					@Override
+					public NamedArea currentNamedArea() {
+						return area;
+					}
+
+					@Override
+					public NamedArea previousNamedArea() {
+						return null;
+					}
+
+					@Override
+					public void log(String text) {
+						player.sendSystemMessage(Component.literal(text));
+					}
+
+					@Override
+					public void populateAllContainersInsideOfNamedArea() {
+						ModTesting.poplulateContainersInsideOfNamedArea(player, area);
+					}
+
+					@Override
+					public void replaceDialogWith(String dialog) {
+						current = current == ChatFormatting.DARK_GREEN ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN;
+						player.sendSystemMessage(Component.literal(dialog).withStyle(current));
+					}
+
+					@Override
+					public void appendDialog(String text) {
+						player.sendSystemMessage(Component.literal(text).withStyle(current));
+					}
+
+					//private ChatFormatting[] formattings = {ChatFormatting.DARK_GREEN, ChatFormatting.BLUE};
+					private ChatFormatting current = ChatFormatting.DARK_GREEN;
+
+					@Override
+					public void hardcodedStatusMessage() {
+						player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
+					}
+				};
+				if (ActionDefinitionUtils.evaluateTrigger((ITrigger) enteredNamedArea.getTrigger().iterator().next(), context)) {
+					Effects effects = enteredNamedArea.getEffects();
+					List<Effect> effectsAsList = (List<Effect>) effects.streamOf((Class) Effect.class).toList();
+					ActionRuntime actionRuntime = new ActionRuntime(effectsAsList, context);
+					ModTesting.runtime.addRuntime(actionRuntime);
+				}
+			}
+		});
+		ServerTickEvents.START_SERVER_TICK.register(server -> {
+			runtime.tick(server);
+		});
+		ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((playerChatMessage, serverPlayer, bound) -> {
+			String content = playerChatMessage.signedBody().content();
+			return !runtime.userInput(content);
+		});
+	}
+
+	private static void poplulateContainersInsideOfNamedArea(ServerPlayer player, NamedArea area) {
+		if (area == null) return;
+		AABB aabb = fromNamedArea(area);
+		ServerLevel level = player.level();
+		((GrfContainer) level).getGrf().getLevelRules().flatStreamOf(PopulateContainer.class).filter(populateContainer -> aabb.contains(populateContainer.x + 0.5, populateContainer.y + 0.5, populateContainer.z + 0.5)).forEach(populateContainer -> {
+					BlockEntity blockEntity = level.getBlockEntity(new BlockPos(populateContainer.x, populateContainer.y, populateContainer.z));
+					if (blockEntity instanceof Container container) {
+						container.clearContent();
+						ItemParser itemParser = new ItemParser(player.registryAccess());
+						for (AddItem addItem : populateContainer.getAddItems()) {
+							ItemParser.ItemResult parse;
+							try {
+								parse = itemParser.parse(new StringReader(addItem.itemId + "[" + addItem.dataTag + "]"));
+							} catch (CommandSyntaxException e) {
+								throw new RuntimeException(e);
+							}
+							ItemStack itemStack;
+							try {
+								itemStack = new ItemInput(parse.item(), parse.components()).createItemStack(addItem.quantity, false);
+							} catch (CommandSyntaxException e) {
+								throw new RuntimeException(e);
+							}
+							if (container.getContainerSize() > addItem.slot && addItem.slot >= 0) {
+								container.setItem(addItem.slot, itemStack);
 							}
 						}
-					});
-		});
+					}
+				});
+	}
 
+	public static class Runtime {
+		List<ActionRuntime> runtimes = new ArrayList<>();
+
+		public void addRuntime(ActionRuntime runtime) {
+			this.runtimes.add(runtime);
+		}
+
+		public void tick(MinecraftServer server) {
+			List<ActionRuntime> toRemove = new ArrayList<>();
+			for (ActionRuntime actionRuntime : List.copyOf(runtimes)) {
+				boolean stillMore = actionRuntime.evaluate();
+				if (!stillMore) toRemove.add(actionRuntime);
+			}
+			runtimes.removeAll(toRemove);
+		}
+
+		public boolean userInput(String content) {
+			boolean absorb = false;
+			for (ActionRuntime runtime : List.copyOf(runtimes)) {
+				if (runtime.isAwaitingUserInput()) {
+					Optional<Proceed> proceed = runtime.getProceedCancel().getFirstOf(Proceed.class);
+					Optional<Cancel> cancel = runtime.getProceedCancel().getFirstOf(Cancel.class);
+					labe:
+					{
+						if ("y".equals(content)) {
+							proceed.ifPresent(obj -> runtime.addAfterCursor(obj.streamOf((Class) Effect.class).toList()));
+							absorb = true;
+							break labe;
+						}
+						if ("n".equals(content)) {
+							cancel.ifPresent(obj -> runtime.addAfterCursor(obj.streamOf((Class) Effect.class).toList()));
+							absorb = true;
+							break labe;
+						}
+						continue;
+					}
+					runtime.resume();
+				}
+			}
+			return absorb;
+		}
 	}
 }

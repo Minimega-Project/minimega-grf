@@ -31,51 +31,39 @@
  * licensed solely under the GNU General Public License, version 3 or
  * later, without any additional exceptions.
  */
-package dev.jab125.minimega.grf.element;
+package dev.jab125.minimega.grf.actiondefinitions.element;
 
+import dev.jab125.minimega.grf.element.Element;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public interface ElementType<T extends Element> {
-	default T parse(org.w3c.dom.Element element) {
-		return parseSelf(element, parseChildren(element));
+public final class Effects extends ACElement {
+	public Effects(List<Element> children) {
+		super(children);
 	}
 
-	T parseSelf(org.w3c.dom.Element element, List<Element> children);
+	@Override
+	public String getId() {
+		return "Effects";
+	}
 
-	default List<Element> parseChildren(org.w3c.dom.Element element) {
-		NodeList childNodes = element.getChildNodes();
-		ArrayList<Element> objects = new ArrayList<>();
-		for (int i = 0; i < childNodes.getLength(); i++) {
-			Node item = childNodes.item(i);
-			if (item.getNodeType() == Node.ELEMENT_NODE) {
-				org.w3c.dom.Element item1 = (org.w3c.dom.Element) item;
-				String nodeName = item1.getNodeName();
-				objects.add(getRegistry().get(nodeName).parse(item1));
-			}
+	public static class Type implements ACType<Effects> {
+		@Override
+		public Effects parseSelf(org.w3c.dom.Element element, List<Element> children) {
+			return new Effects(children);
 		}
-		return objects;
-	}
 
-	default org.w3c.dom.Element serialize(Document document, T self) {
-		return serializeSelf(document, self, serializeChildren(document, self));
-	}
+		@Override
+		public org.w3c.dom.Element serializeSelf(
+				Document document,
+				Effects self,
+				List<org.w3c.dom.Element> children
+		) {
+			org.w3c.dom.Element element = document.createElement(self.getId());
+			children.forEach(element::appendChild);
 
-	org.w3c.dom.Element serializeSelf(Document document, T self, List<org.w3c.dom.Element> children);
-
-	default List<org.w3c.dom.Element> serializeChildren(Document document, T self) {
-		ArrayList<org.w3c.dom.Element> objects = new ArrayList<>();
-		self.stream().forEachOrdered(element -> {
-			objects.add(getRegistry().get(element.getId()).serialize(document, element));
-		});
-		return objects;
-	}
-
-	default ElementRegistry getRegistry() {
-		return Element.GAME_RULE_FILE_REGISTRY;
+			return element;
+		}
 	}
 }

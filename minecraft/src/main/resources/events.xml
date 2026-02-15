@@ -1,0 +1,121 @@
+<ActionDefinitions>
+    <OnActions>
+        <!-- Beacon tutorial -->
+        <EnteredNamedArea>
+            <Trigger>
+                <All>
+                    <Not>
+                        <CompletedTutorial>beaconTutorial</CompletedTutorial>
+                    </Not>
+                    <CurrentNamedArea>beaconArea</CurrentNamedArea>
+                </All>
+            </Trigger>
+            <Effects>
+                <PopulateAllContainersInsideOfNamedArea/>
+                <DialogSequence>
+                    <Dialog>
+                        <Text>
+                            At the top of this pyramid there is a Beacon.
+                            Press [A] to learn more about Beacons.
+                            Press [B] if you already know about beacons.
+                        </Text>
+                        <OnCancel>
+                            <ExitDialogSequence/>
+                        </OnCancel>
+                    </Dialog>
+                    <CompleteTutorial>beaconTutorial</CompleteTutorial>
+                </DialogSequence>
+            </Effects>
+        </EnteredNamedArea>
+        <!-- Farming tutorial -->
+        <EnteredNamedArea>
+            <Trigger>
+                <All>
+                    <Not>
+                        <CompletedTutorial>farmingTutorial</CompletedTutorial>
+                    </Not>
+                    <CurrentNamedArea>farmingArea</CurrentNamedArea>
+                </All>
+            </Trigger>
+            <Effects>
+                <PopulateAllContainersInsideOfNamedArea/>
+                <DialogSequence>
+                    <Dialog>
+                        <Text>
+                            In this area a farm has been set up.
+                            Farming enables you to create a renewable source of food and other items.
+                            <Delay><!-- Only after the entire dialog box is shown can it be interacted with -->
+                                Press {Proceed} to learn more about farming.
+                                Press {Back} if you already know about farming.
+                            </Delay>
+                        </Text>
+                        <OnCancel>
+                            <ExitDialogSequence/>
+                        </OnCancel>
+                    </Dialog>
+                    <CompleteTutorial>farmingTutorial</CompleteTutorial>
+                </DialogSequence>
+            </Effects>
+        </EnteredNamedArea>
+        <!-- Conduit Tutorial -->
+        <EnteredNamedArea>
+            <Trigger>
+                <All>
+                    <Not>
+                        <CompletedTutorial>conduitTutorial</CompletedTutorial>
+                    </Not>
+                    <CurrentNamedArea>conduitArea</CurrentNamedArea>
+                </All>
+            </Trigger>
+            <Effects>
+                <PopulateAllContainersInsideOfNamedArea/>
+                <DialogSequence>
+                    <Dialog>
+                        <Text>
+                            This area will teach you all about Conduits.
+                            <Delay>
+                                Press {Proceed} to learn more about Conduits.
+                                Press {Back} if you already know about Conduits.
+                            </Delay>
+                        </Text>
+                        <OnCancel>
+                            <ExitDialogSequence/>
+                        </OnCancel>
+                    </Dialog>
+                    <Dialog>
+                        <Text>
+                            Conduits provide players with a powerful Status Effect when they are underwater or in the rain, but they can be quite complicated to build.
+                            <Delay><ContinueText/></Delay>
+                        </Text>
+                    </Dialog>
+                    <Dialog>
+                        <Text>
+                            The chest in the area has everything you need to craft a Conduit; eight Nautilus Shells and one Heart of the Sea.
+                            <Delay><ContinueText/></Delay>
+                        </Text>
+                    </Dialog>
+                    <Dialog>
+                        <Text>
+                            A Conduit will only activate when it is underwater, and fully surrounded by water (even diagonally).
+                            <Delay><ContinueText/></Delay>
+                        </Text>
+                    </Dialog>
+                    <Dialog>
+                        <Text>
+                            A Conduit must be placed within a frame made of Prismarine, Dark Prismarine, Prismarine Bricks, and/or Sea Lanterns.
+                            There's a frame in the water nearby.
+                            <Delay><ContinueText/></Delay>
+                        </Text>
+                    </Dialog>
+                    <Dialog>
+                        <Text>
+                            Try crafting a Conduit, placing it on the wooden planks in the centre of the frame, then removing the planks.
+                            <Delay><ContinueText/></Delay>
+                        </Text>
+                    </Dialog>
+                    <CompleteTutorial>conduitTutorial</CompleteTutorial>
+                </DialogSequence>
+            </Effects>
+        </EnteredNamedArea>
+    </OnActions>
+</ActionDefinitions>

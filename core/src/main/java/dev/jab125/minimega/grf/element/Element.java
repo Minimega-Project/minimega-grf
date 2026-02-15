@@ -53,87 +53,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public abstract sealed class Element implements Iterable<Element> permits ActiveChunkArea, AddItem, Checkpoint, CustomBeacon, DropperY, FistfightFlag, ForcedBiome, LevelRules, MapOptions, NamedArea, PopulateContainer, ScoreRing, TargetArea, ThermalArea, Unfinished, UpdatePlayer, __ROOT__ {
-	public static final Map<String, ElementType<?>> REGISTRY = new HashMap<>() {
-		@Override
-		public ElementType<?> get(Object key) {
-			return Objects.requireNonNull(super.get(key), key.toString());
-		}
-	};
-
-	static {
-		// Not a perfect ordering, but good enough
-		// Glide
-		REGISTRY.put("__ROOT__", new __ROOT__.Type());
-		REGISTRY.put("ForcedBiome", new ForcedBiome.Type());
-		REGISTRY.put("Checkpoint", new Checkpoint.Type());
-		REGISTRY.put("UpdatePlayer", new UpdatePlayer.Type());
-		REGISTRY.put("MapOptions", new MapOptions.Type());
-		REGISTRY.put("PlayerBoundsVolume", new Unfinished.Type("PlayerBoundsVolume"));
-		REGISTRY.put("LevelRules", new LevelRules.Type());
-		REGISTRY.put("ActiveChunkArea", new ActiveChunkArea.Type());
-		REGISTRY.put("ActiveViewArea", new Unfinished.Type("ActiveViewArea"));
-		REGISTRY.put("CustomBeacon", new CustomBeacon.Type());
-		REGISTRY.put("ThermalArea", new ThermalArea.Type());
-		REGISTRY.put("TargetArea", new TargetArea.Type());
-		REGISTRY.put("ScoreRing", new ScoreRing.Type());
-		REGISTRY.put("BlockCollisionException", new Unfinished.Type("BlockCollisionException"));
-		REGISTRY.put("NamedArea", new NamedArea.Type());
-
-		// Tumble
-		REGISTRY.put("Killbox", new Unfinished.Type("Killbox"));
-		REGISTRY.put("GrantPermissions", new Unfinished.Type("GrantPermissions"));
-		REGISTRY.put("AllowIn", new Unfinished.Type("AllowIn"));
-		REGISTRY.put("LayerGeneration", new Unfinished.Type("LayerGeneration"));
-		REGISTRY.put("AnyCombinationOf", new Unfinished.Type("AnyCombinationOf"));
-		REGISTRY.put("LayerSize", new Unfinished.Type("LayerSize"));
-		REGISTRY.put("LinearBlendSize", new Unfinished.Type("LinearBlendSize"));
-		REGISTRY.put("LayerShape", new Unfinished.Type("LayerShape"));
-		REGISTRY.put("BasicShape", new Unfinished.Type("BasicShape"));
-		REGISTRY.put("StarShape", new Unfinished.Type("StarShape"));
-		REGISTRY.put("RingShape", new Unfinished.Type("RingShape"));
-		REGISTRY.put("LayerFill", new Unfinished.Type("LayerFill"));
-		REGISTRY.put("BasicLayerFill", new Unfinished.Type("BasicLayerFill"));
-		REGISTRY.put("CurvedLayerFill", new Unfinished.Type("CurvedLayerFill"));
-		REGISTRY.put("WarpedLayerFill", new Unfinished.Type("WarpedLayerFill"));
-		REGISTRY.put("LayerTheme", new Unfinished.Type("LayerTheme"));
-		REGISTRY.put("MushroomBlockTheme", new Unfinished.Type("MushroomBlockTheme"));
-		REGISTRY.put("RainbowTheme", new Unfinished.Type("RainbowTheme"));
-		REGISTRY.put("BlockDef", new Unfinished.Type("BlockDef"));
-		REGISTRY.put("TerracottaTheme", new Unfinished.Type("TerracottaTheme"));
-		REGISTRY.put("FunctionPatchesTheme", new Unfinished.Type("FunctionPatchesTheme"));
-		REGISTRY.put("BasicPatchesTheme", new Unfinished.Type("BasicPatchesTheme"));
-		REGISTRY.put("FilterTheme", new Unfinished.Type("FilterTheme"));
-		REGISTRY.put("SimplePatchesTheme", new Unfinished.Type("SimplePatchesTheme"));
-		REGISTRY.put("Variations", new Unfinished.Type("Variations"));
-		REGISTRY.put("ShaftsTheme", new Unfinished.Type("ShaftsTheme"));
-		REGISTRY.put("NullTheme", new Unfinished.Type("NullTheme"));
-
-		// Fistfight
-		REGISTRY.put("DropperY", new DropperY.Type());
-		REGISTRY.put("FistfightFlag", new FistfightFlag.Type());
-
-		// Lobby
-		REGISTRY.put("OnGameStartSpawnPositions", new Unfinished.Type("OnGameStartSpawnPositions"));
-		REGISTRY.put("SpawnPositionSet", new Unfinished.Type("SpawnPositionSet"));
-		REGISTRY.put("OnInitialiseWorld", new Unfinished.Type("OnInitialiseWorld"));
-		REGISTRY.put("PopulateContainer", new PopulateContainer.Type());
-		REGISTRY.put("AddItem", new AddItem.Type());
-
-		// Tutorial
-		REGISTRY.put("StartFeature", new Unfinished.Type("StartFeature"));
-		REGISTRY.put("AddEnchantment", new Unfinished.Type("AddEnchantment"));
-		REGISTRY.put("CompleteAll", new Unfinished.Type("CompleteAll"));
-		REGISTRY.put("CollectItem", new Unfinished.Type("CollectItem"));
-	}
-
+public abstract class Element implements Iterable<Element> {
+	public static final ElementRegistry GAME_RULE_FILE_REGISTRY = new ElementRegistry();
 	private final List<Element> elementList;
 
 	public Element(List<Element> children) {
 		this.elementList = children;
 	}
 
-	public static Element fromXML(InputStream stream) throws ParserConfigurationException, IOException, SAXException {
+	public static Element fromXML(InputStream stream, ElementRegistry registry) throws ParserConfigurationException, IOException, SAXException {
 		// 1. Create a DocumentBuilderFactory
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -148,7 +76,7 @@ public abstract sealed class Element implements Iterable<Element> permits Active
 		Document doc = builder.parse(new ByteArrayInputStream(stream.readAllBytes()));
 		org.w3c.dom.Element documentElement = doc.getDocumentElement();
 		String nodeName = documentElement.getNodeName();
-		return REGISTRY.get(nodeName).parse(documentElement);
+		return registry.get(nodeName).parse(documentElement);
 	}
 
 	@Override
@@ -200,7 +128,7 @@ public abstract sealed class Element implements Iterable<Element> permits Active
 		String string = "{";
 		NamedNodeMap attributes = null;
 		try {
-			attributes = ((ElementType<Element>) REGISTRY.get(getId())).serialize(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument(), this).getAttributes();
+			attributes = getRegistry().get(getId()).serialize(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument(), this).getAttributes();
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException(e);
 		}
@@ -212,6 +140,10 @@ public abstract sealed class Element implements Iterable<Element> permits Active
 		}
 		string += "}";
 		return string;
+	}
+
+	public ElementRegistry getRegistry() {
+		return GAME_RULE_FILE_REGISTRY;
 	}
 }
 

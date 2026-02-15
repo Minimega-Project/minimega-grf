@@ -24,4 +24,4 @@ pluginManagement {
 
 rootProject.name = "minimega-grf"
 
-include("core", "minecraft")
+include("core", "actiondefinitions", "minecraft")

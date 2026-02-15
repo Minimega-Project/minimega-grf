@@ -169,7 +169,7 @@ public class ModInit implements ModInitializer {
 
 					// Create a new, empty Document object
 					Document doc = builder.newDocument();
-					String str = GRFStreamCodecs.toString(((ElementType) Element.REGISTRY.get(id)).serialize(doc, grf));
+					String str = GRFStreamCodecs.toString(Element.GAME_RULE_FILE_REGISTRY.get(id).serialize(doc, grf));
 					try {
 						Files.writeString(grfPath, Json2XmlConverter.toPrettyString(str, 2));
 					} catch (IOException e) {
@@ -288,7 +288,7 @@ public class ModInit implements ModInitializer {
 		Path resolve = dimensionPath.resolve("gamerulefile.xml");
 		if (Files.isRegularFile(resolve)) {
 			InputStream inputStream = Files.newInputStream(resolve);
-			return (__ROOT__) Element.fromXML(inputStream);
+			return (__ROOT__) Element.fromXML(inputStream, Element.GAME_RULE_FILE_REGISTRY);
 		}
 		return null;
 	}

@@ -38,13 +38,13 @@ public class GRFStreamCodecs {
 
 			// Create a new, empty Document object
 			Document doc = builder.newDocument();
-			ByteBufCodecs.STRING_UTF8.encode(object, GRFStreamCodecs.toString(((ElementType)Element.REGISTRY.get(id)).serialize(doc, object2)));
+			ByteBufCodecs.STRING_UTF8.encode(object, GRFStreamCodecs.toString(Element.GAME_RULE_FILE_REGISTRY.get(id).serialize(doc, object2)));
 		}
 
 		@Override
 		public Element decode(ByteBuf object) {
 			try {
-				return Element.fromXML(new ByteArrayInputStream(ByteBufCodecs.STRING_UTF8.decode(object).getBytes(StandardCharsets.UTF_8)));
+				return Element.fromXML(new ByteArrayInputStream(ByteBufCodecs.STRING_UTF8.decode(object).getBytes(StandardCharsets.UTF_8)), Element.GAME_RULE_FILE_REGISTRY);
 			} catch (ParserConfigurationException | IOException | SAXException e) {
 				throw new RuntimeException(e);
 			}

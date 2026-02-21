@@ -12,7 +12,10 @@
         <!-- Beacon tutorial -->
         <EnteredNamedArea>
             <Trigger>
-                <CurrentNamedArea>beaconArea</CurrentNamedArea>
+                <All>
+                    <CurrentNamedArea>beaconArea</CurrentNamedArea>
+                    <NotRunningAlready/>
+                </All>
             </Trigger>
             <Effects>
                 <DialogSequence>
@@ -26,9 +29,9 @@
                     </AppendToDialog>
                     <ProceedCancel>
                         <Cancel>
-                            <Log>
-                                Exiting dialog sequence
-                            </Log>
+<!--                            <Log>-->
+<!--                                Exiting dialog sequence-->
+<!--                            </Log>-->
                             <ExitDialogSequence/>
                         </Cancel>
                     </ProceedCancel>
@@ -69,9 +72,9 @@
                     </AppendToDialog>
                     <ProceedCancel>
                         <Cancel>
-                            <Log>
-                                Exiting dialog sequence
-                            </Log>
+<!--                            <Log>-->
+<!--                                Exiting dialog sequence-->
+<!--                            </Log>-->
                             <ExitDialogSequence/>
                         </Cancel>
                     </ProceedCancel>

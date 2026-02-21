@@ -13,6 +13,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.ITrigger;
 import dev.jab125.minimega.grf.actiondefinitions.element.Not;
 import dev.jab125.minimega.grf.actiondefinitions.element.NotRunningAlready;
 import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
+import dev.jab125.minimega.grf.actiondefinitions.element.Any;
 import dev.jab125.minimega.grf.actiondefinitions.element.Proceed;
 import dev.jab125.minimega.grf.actiondefinitions.element.Trigger;
 import dev.jab125.minimega.grf.element.Element;
@@ -179,6 +180,9 @@ public class ActionDefinitionUtils {
 			case All all -> all.stream()
 					.filter(ITrigger.class::isInstance)
 					.map(ITrigger.class::cast).allMatch(a -> evaluateTrigger(a, context));
+			case Any any -> any.stream()
+					.filter(ITrigger.class::isInstance)
+					.map(ITrigger.class::cast).anyMatch(a -> evaluateTrigger(a, context));
 			case NotRunningAlready ignored -> context.notRunningAlready();
 		};
 	}

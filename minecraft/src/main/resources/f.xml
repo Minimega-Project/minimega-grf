@@ -22,7 +22,7 @@
                 </OnCancel>
             </Dialog>
             <Dialog>
-                Conduits provide players with a powerful Status Effect when they are underwater or in the rain, but they can be quite complicated to build.
+                Conduits provide players with a powerful Status Effect when they are underwater any in the rain, but they can be quite complicated to build.
                 <Delay><ContinueText/></Delay>
             </Dialog>
             <Dialog>
@@ -34,7 +34,7 @@
                 <Delay><ContinueText/></Delay>
             </Dialog>
             <Dialog>
-                A Conduit must be placed within a frame made of Prismarine, Dark Prismarine, Prismarine Bricks, and/or Sea Lanterns.
+                A Conduit must be placed within a frame made of Prismarine, Dark Prismarine, Prismarine Bricks, and/any Sea Lanterns.
                 There's a frame in the water nearby.
                 <Delay><ContinueText/></Delay>
             </Dialog>

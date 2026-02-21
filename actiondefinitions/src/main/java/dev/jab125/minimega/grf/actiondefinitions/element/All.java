@@ -45,7 +45,7 @@ public final class All extends ACElement implements ITrigger {
 
 	@Override
 	public String getId() {
-		return "Not";
+		return "All";
 	}
 
 	public static class Type implements ACType<All> {

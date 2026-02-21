@@ -33,5 +33,37 @@
  */
 package dev.jab125.minimega.grf.actiondefinitions.element;
 
-public sealed interface ITrigger permits All, Always, CurrentNamedArea, Not, NotRunningAlready, Any {
+import dev.jab125.minimega.grf.element.Element;
+import org.w3c.dom.Document;
+
+import java.util.List;
+
+public final class Any extends ACElement implements ITrigger {
+	public Any(List<Element> children) {
+		super(children);
+	}
+
+	@Override
+	public String getId() {
+		return "Or";
+	}
+
+	public static class Type implements ACType<Any> {
+		@Override
+		public Any parseSelf(org.w3c.dom.Element element, List<Element> children) {
+			return new Any(children);
+		}
+
+		@Override
+		public org.w3c.dom.Element serializeSelf(
+				Document document,
+				Any self,
+				List<org.w3c.dom.Element> children
+		) {
+			org.w3c.dom.Element element = document.createElement(self.getId());
+			children.forEach(element::appendChild);
+
+			return element;
+		}
+	}
 }

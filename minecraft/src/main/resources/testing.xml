@@ -21,8 +21,8 @@
                     </Dialog>
                     <Delay/>
                     <AppendToDialog>
-                        Press [A] to learn more about Beacons.
-                        Press [B] if you already know about beacons.
+                        Press {y} to learn more about Beacons.
+                        Press {n} if you already know about beacons.
                     </AppendToDialog>
                     <ProceedCancel>
                         <Cancel>
@@ -49,7 +49,10 @@
 <!--                    <CurrentNamedArea>conduitArea</CurrentNamedArea>-->
 <!--                &lt;!&ndash;</All>&ndash;&gt;-->
                 <All>
-                    <CurrentNamedArea>conduitArea</CurrentNamedArea>
+                    <Any>
+                        <CurrentNamedArea>conduitChestArea</CurrentNamedArea>
+                        <CurrentNamedArea>conduitArea</CurrentNamedArea>
+                    </Any>
                     <NotRunningAlready/>
                 </All>
             </Trigger>

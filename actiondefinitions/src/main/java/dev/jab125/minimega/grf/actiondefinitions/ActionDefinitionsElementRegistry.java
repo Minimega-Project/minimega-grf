@@ -11,6 +11,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("Always", new Always.Type());
 		register("AppendToDialog", new AppendToDialog.Type());
 		register("Cancel", new Cancel.Type());
+		register("CloseDialog", new CloseDialog.Type());
 		register("ContinueText", new ContinueText.Type());
 		register("CurrentNamedArea", new CurrentNamedArea.Type());
 		register("Delay", new Delay.Type());

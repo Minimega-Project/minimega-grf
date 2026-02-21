@@ -59,6 +59,7 @@ import dev.jab125.minimega.grf.element.LevelRules;
 import dev.jab125.minimega.grf.element.NamedArea;
 import dev.jab125.minimega.grf.element.__ROOT__;
 import dev.jab125.minimega.grf.minecraft.event.Events;
+import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
 import dev.jab125.minimega.grf.minecraft.networking.GameRuleFilePayload;
 import dev.jab125.minimega.grf.minecraft.util.NamedAreaUtils;
 import dev.jab125.minimega.grf.minecraft.util.RootHolder;
@@ -114,6 +115,7 @@ public class ModInit implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		PayloadTypeRegistry.playS2C().register(GameRuleFilePayload.TYPE, GameRuleFilePayload.STREAM_CODEC);
+		PayloadTypeRegistry.playS2C().register(DialogPayload.TYPE, DialogPayload.STREAM_CODEC);
 		ServerTickEvents.START_WORLD_TICK.register(serverLevel -> {
 			__ROOT__ grf = ((GrfContainer) serverLevel).getGrf();
 			if (grf == null) return;

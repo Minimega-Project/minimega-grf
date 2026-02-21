@@ -62,9 +62,11 @@ import dev.jab125.minimega.grf.element.PopulateContainer;
 import dev.jab125.minimega.grf.element.__ROOT__;
 import dev.jab125.minimega.grf.minecraft.ModInit;
 import dev.jab125.minimega.grf.minecraft.event.Events;
+import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemParser;
@@ -156,13 +158,21 @@ public class ModTesting implements ModInitializer {
 
 					@Override
 					public void replaceDialogWith(String dialog) {
-						current = current == ChatFormatting.DARK_GREEN ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN;
-						player.sendSystemMessage(Component.literal(dialog).withStyle(current));
+						if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
+							ServerPlayNetworking.send(player, new DialogPayload(dialog == null ? null : Component.literal(dialog), false));
+						} else {
+							current = current == ChatFormatting.DARK_GREEN ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN;
+							player.sendSystemMessage(Component.literal(dialog).withStyle(current));
+						}
 					}
 
 					@Override
 					public void appendDialog(String text) {
-						player.sendSystemMessage(Component.literal(text).withStyle(current));
+						if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
+							ServerPlayNetworking.send(player, new DialogPayload(Component.literal(text), true));
+						} else {
+							player.sendSystemMessage(Component.literal(text).withStyle(current));
+						}
 					}
 
 					//private ChatFormatting[] formattings = {ChatFormatting.DARK_GREEN, ChatFormatting.BLUE};
@@ -182,6 +192,11 @@ public class ModTesting implements ModInitializer {
 					public Object getIdentity() {
 						return identity;
 					}
+
+					@Override
+					public Object getOwner() {
+						return player;
+					}
 				};
 				if (ActionDefinitionUtils.evaluateTrigger((ITrigger) enteredNamedArea.getTrigger().iterator().next(), context)) {
 					Effects effects = enteredNamedArea.getEffects();
@@ -196,7 +211,7 @@ public class ModTesting implements ModInitializer {
 		});
 		ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((playerChatMessage, serverPlayer, bound) -> {
 			String content = playerChatMessage.signedBody().content();
-			return !runtime.userInput(content);
+			return !runtime.userInput(content, serverPlayer);
 		});
 	}
 
@@ -246,10 +261,10 @@ public class ModTesting implements ModInitializer {
 			runtimes.removeAll(toRemove);
 		}
 
-		public boolean userInput(String content) {
+		public boolean userInput(String content, ServerPlayer player) {
 			boolean absorb = false;
 			for (ActionRuntime runtime : List.copyOf(runtimes)) {
-				if (runtime.isAwaitingUserInput()) {
+				if (runtime.getOwner() == player && runtime.isAwaitingUserInput()) {
 					Optional<Proceed> proceed = runtime.getProceedCancel().getFirstOf(Proceed.class);
 					Optional<Cancel> cancel = runtime.getProceedCancel().getFirstOf(Cancel.class);
 					labe:

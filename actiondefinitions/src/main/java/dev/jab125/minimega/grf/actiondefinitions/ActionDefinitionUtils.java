@@ -98,6 +98,11 @@ public class ActionDefinitionUtils {
 				return null;
 			}
 
+			@Override
+			public Object getOwner() {
+				return null;
+			}
+
 			//			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);

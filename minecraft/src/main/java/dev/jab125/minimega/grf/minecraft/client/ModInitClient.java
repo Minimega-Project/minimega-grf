@@ -52,13 +52,18 @@ import dev.jab125.minimega.grf.element.NamedArea;
 import dev.jab125.minimega.grf.element.__ROOT__;
 import dev.jab125.minimega.grf.minecraft.GRFStreamCodecs;
 import dev.jab125.minimega.grf.minecraft.ServerLevelExtension;
+import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
 import dev.jab125.minimega.grf.minecraft.networking.GameRuleFilePayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 //import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
@@ -66,8 +71,11 @@ import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
 import net.minecraft.gizmos.TextGizmo;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.w3c.dom.Document;
@@ -87,6 +95,7 @@ import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
 
 public class ModInitClient implements ClientModInitializer {
 	public static __ROOT__ currentDimensionGrf;
+	public static Component currentTutorialMessage;
 	@Override
 	public void onInitializeClient() {
 		RenderStateDataKey<List<NamedArea>> namedAreasDataKey = RenderStateDataKey.create(() -> "Named Areas Data Key");
@@ -95,6 +104,7 @@ public class ModInitClient implements ClientModInitializer {
 			//Gizmos.cuboid()
 		});
 		WorldRenderEvents.END_EXTRACTION.register(context -> {
+			if (!Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) return;
 			//context.worldState().setData(namedAreasDataKey, ().orElseGet(List::of));
 			__ROOT__ grf = ((GrfContainer) context.world()).getGrf();
 			if (grf == null) return;
@@ -107,6 +117,33 @@ public class ModInitClient implements ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(GameRuleFilePayload.TYPE, (payload, context) -> {
 			currentDimensionGrf = payload.root().orElse(null);
+		});
+		ClientPlayNetworking.registerGlobalReceiver(DialogPayload.TYPE, (payload, context) -> {
+			if (!payload.append()) {
+				currentTutorialMessage = payload.message().orElse(null);
+			} else {
+				currentTutorialMessage = currentTutorialMessage.copy().append("\n").append(payload.message().orElseThrow());
+			}
+		});
+
+		HudElementRegistry.addLast(Identifier.parse("minimega_grf_minecraft:tutorial"), new HudElement() {
+			@Override
+			public void render(GuiGraphics context, DeltaTracker tickCounter) {
+				if (currentTutorialMessage == null) return;
+				Component text = currentTutorialMessage;
+				List<FormattedCharSequence> split = Minecraft.getInstance().font.split(text, 168);
+				int width = context.guiWidth();
+				int height = context.guiHeight();
+				context.fill(width - 180, 30, width - 10, 30+split.size() * Minecraft.getInstance().font.lineHeight + 4, 0x55000000);
+				//context.drawString(Minecraft.getInstance().font, "Tutorial Text", width - 158, 32, 0xffffffff);
+
+				int i = 0;
+
+				for (FormattedCharSequence formattedCharSequence : split) {
+					context.drawString(Minecraft.getInstance().font, formattedCharSequence, width - 178, 32 + i, 0xffffffff);
+					i+=Minecraft.getInstance().font.lineHeight;
+				}
+			}
 		});
 
 

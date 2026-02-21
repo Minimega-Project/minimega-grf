@@ -103,6 +103,7 @@
                     <Delay/>
                     <ContinueText/>
                     <ProceedCancel/>
+                    <CloseDialog/>
                     <!--<CompleteTutorial>conduitTutorial</CompleteTutorial>-->
                 </DialogSequence>
             </Effects>

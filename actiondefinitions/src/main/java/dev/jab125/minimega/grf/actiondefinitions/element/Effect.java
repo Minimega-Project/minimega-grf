@@ -33,6 +33,6 @@
  */
 package dev.jab125.minimega.grf.actiondefinitions.element;
 
-public sealed interface Effect permits AppendToDialog, ContinueText, Delay, Dialog, DialogSequence, ExitDialogSequence, HardcodedStatusMessage, Log, PopulateAllContainersInsideOfNamedArea, ProceedCancel {
+public sealed interface Effect permits AppendToDialog, CloseDialog, ContinueText, Delay, Dialog, DialogSequence, ExitDialogSequence, HardcodedStatusMessage, Log, PopulateAllContainersInsideOfNamedArea, ProceedCancel {
 
 }

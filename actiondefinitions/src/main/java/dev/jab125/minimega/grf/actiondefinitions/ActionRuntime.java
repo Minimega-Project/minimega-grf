@@ -1,6 +1,7 @@
 package dev.jab125.minimega.grf.actiondefinitions;
 
 import dev.jab125.minimega.grf.actiondefinitions.element.AppendToDialog;
+import dev.jab125.minimega.grf.actiondefinitions.element.CloseDialog;
 import dev.jab125.minimega.grf.actiondefinitions.element.ContinueText;
 import dev.jab125.minimega.grf.actiondefinitions.element.Delay;
 import dev.jab125.minimega.grf.actiondefinitions.element.Dialog;
@@ -28,6 +29,10 @@ public class ActionRuntime {
 
 	public Object getIdentity() {
 		return context.getIdentity();
+	}
+
+	public Object getOwner() {
+		return context.getOwner();
 	}
 
 	public ActionRuntime(List<Effect> effects, Context context) {
@@ -58,6 +63,9 @@ public class ActionRuntime {
 					case ContinueText continueText -> {
 						context.appendDialog("Press {y} to continue.");
 					}
+					case CloseDialog closeDialog -> {
+						context.replaceDialogWith(null);
+					}
 					case Delay ignored -> {
 						stop = 40;
 						return true;
@@ -71,6 +79,7 @@ public class ActionRuntime {
 						context.runAsync(actionRuntime);
 					}
 					case ExitDialogSequence ignored -> {
+						context.replaceDialogWith(null);
 						exited = true;
 						return false;
 					}

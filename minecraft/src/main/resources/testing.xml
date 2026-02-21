@@ -9,6 +9,29 @@
                 <PopulateAllContainersInsideOfNamedArea/>
             </Effects>
         </EnteredNamedArea>
+        <EnteredNamedArea>
+            <Trigger>
+                <All>
+                    <CurrentNamedArea>maceArea</CurrentNamedArea>
+                    <NotRunningAlready/>
+                </All>
+            </Trigger>
+            <Effects>
+                <DialogSequence>
+                    <Dialog>
+                        yo person that made the mace tutorial
+                    </Dialog>
+                    <Delay/>
+                    <AppendToDialog>
+                        please add a tutorial here
+                    </AppendToDialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <CloseDialog/>
+                </DialogSequence>
+            </Effects>
+        </EnteredNamedArea>
         <!-- Beacon tutorial -->
         <EnteredNamedArea>
             <Trigger>

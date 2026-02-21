@@ -26,6 +26,10 @@ public class ActionRuntime {
 	private final Context context;
 	private int stop;
 
+	public Object getIdentity() {
+		return context.getIdentity();
+	}
+
 	public ActionRuntime(List<Effect> effects, Context context) {
 		this.effects = new ArrayList<>(effects);
 		this.context = context;

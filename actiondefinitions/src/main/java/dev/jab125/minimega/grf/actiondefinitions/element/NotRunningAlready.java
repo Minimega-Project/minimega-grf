@@ -31,34 +31,39 @@
  * licensed solely under the GNU General Public License, version 3 or
  * later, without any additional exceptions.
  */
-package dev.jab125.minimega.grf.actiondefinitions;
+package dev.jab125.minimega.grf.actiondefinitions.element;
 
-import dev.jab125.minimega.grf.element.NamedArea;
+import dev.jab125.minimega.grf.element.Element;
+import org.w3c.dom.Document;
 
-public interface Context {
-	default boolean completedTutorial(String tutorial) {
-		return false;
+import java.util.List;
+
+public final class NotRunningAlready extends ACElement implements ITrigger {
+	public NotRunningAlready(List<Element> children) {
+		super(children);
 	}
 
-	void runAsync(ActionRuntime runtime);
+	@Override
+	public String getId() {
+		return "NotRunningAlready";
+	}
 
-	NamedArea currentNamedArea();
+	public static class Type implements ACType<NotRunningAlready> {
+		@Override
+		public NotRunningAlready parseSelf(org.w3c.dom.Element element, List<Element> children) {
+			return new NotRunningAlready(children);
+		}
 
-	NamedArea previousNamedArea();
+		@Override
+		public org.w3c.dom.Element serializeSelf(
+				Document document,
+				NotRunningAlready self,
+				List<org.w3c.dom.Element> children
+		) {
+			org.w3c.dom.Element element = document.createElement(self.getId());
+			children.forEach(element::appendChild);
 
-	void log(String text);
-
-	void populateAllContainersInsideOfNamedArea();
-
-	void replaceDialogWith(String dialog);
-
-	void appendDialog(String text);
-
-	void hardcodedStatusMessage();
-
-	boolean notRunningAlready();
-
-	Object getIdentity();
-
-	//void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel);
+			return element;
+		}
+	}
 }

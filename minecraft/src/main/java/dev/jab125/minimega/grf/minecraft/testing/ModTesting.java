@@ -127,6 +127,7 @@ public class ModTesting implements ModInitializer {
 			List<EnteredNamedArea> list = actionDefinitions.getOnActions().streamOf(EnteredNamedArea.class).toList();
 			for (EnteredNamedArea enteredNamedArea : list) {
 				var context = new Context() {
+					private final Object identity = enteredNamedArea;
 
 					@Override
 					public void runAsync(ActionRuntime runtime) {
@@ -170,6 +171,16 @@ public class ModTesting implements ModInitializer {
 					@Override
 					public void hardcodedStatusMessage() {
 						player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
+					}
+
+					@Override
+					public boolean notRunningAlready() {
+						return ModTesting.runtime.runtimes.stream().noneMatch(a -> a.getIdentity() == identity);
+					}
+
+					@Override
+					public Object getIdentity() {
+						return identity;
 					}
 				};
 				if (ActionDefinitionUtils.evaluateTrigger((ITrigger) enteredNamedArea.getTrigger().iterator().next(), context)) {

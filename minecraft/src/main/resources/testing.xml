@@ -42,12 +42,16 @@
         <!-- Conduit tutorial -->
         <EnteredNamedArea>
             <Trigger>
-                <!--<All>-->
-                    <!--<Not>-->
-                        <!--<CompletedTutorial>conduitTutorial</CompletedTutorial>-->
-                    <!--</Not>-->
+<!--                &lt;!&ndash;<All>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<Not>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<CompletedTutorial>conduitTutorial</CompletedTutorial>&ndash;&gt;-->
+<!--                    &lt;!&ndash;</Not>&ndash;&gt;-->
+<!--                    <CurrentNamedArea>conduitArea</CurrentNamedArea>-->
+<!--                &lt;!&ndash;</All>&ndash;&gt;-->
+                <All>
                     <CurrentNamedArea>conduitArea</CurrentNamedArea>
-                <!--</All>-->
+                    <NotRunningAlready/>
+                </All>
             </Trigger>
             <Effects>
                 <!--<PopulateAllContainersInsideOfNamedArea/>-->

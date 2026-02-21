@@ -7,6 +7,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 	public static final ActionDefinitionsElementRegistry REGISTRY = new ActionDefinitionsElementRegistry();
 	{
 		register("ActionDefinitions", new ActionDefinitions.Type());
+		register("All", new All.Type());
 		register("Always", new Always.Type());
 		register("AppendToDialog", new AppendToDialog.Type());
 		register("Cancel", new Cancel.Type());
@@ -21,6 +22,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("HardcodedStatusMessage", new HardcodedStatusMessage.Type());
 		register("Log", new Log.Type());
 		register("Not", new Not.Type());
+		register("NotRunningAlready", new NotRunningAlready.Type());
 		register("OnActions", new OnActions.Type());
 		register("PopulateAllContainersInsideOfNamedArea", new PopulateAllContainersInsideOfNamedArea.Type());
 		register("Proceed", new Proceed.Type());

@@ -2,6 +2,7 @@ package dev.jab125.minimega.grf.actiondefinitions;
 
 import dev.jab125.minimega.grf.actiondefinitions.element.ACElement;
 import dev.jab125.minimega.grf.actiondefinitions.element.ActionDefinitions;
+import dev.jab125.minimega.grf.actiondefinitions.element.All;
 import dev.jab125.minimega.grf.actiondefinitions.element.Always;
 import dev.jab125.minimega.grf.actiondefinitions.element.Cancel;
 import dev.jab125.minimega.grf.actiondefinitions.element.CurrentNamedArea;
@@ -10,6 +11,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Effects;
 import dev.jab125.minimega.grf.actiondefinitions.element.EnteredNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ITrigger;
 import dev.jab125.minimega.grf.actiondefinitions.element.Not;
+import dev.jab125.minimega.grf.actiondefinitions.element.NotRunningAlready;
 import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
 import dev.jab125.minimega.grf.actiondefinitions.element.Proceed;
 import dev.jab125.minimega.grf.actiondefinitions.element.Trigger;
@@ -86,7 +88,17 @@ public class ActionDefinitionUtils {
 
 			}
 
-//			@Override
+			@Override
+			public boolean notRunningAlready() {
+				return true;
+			}
+
+			@Override
+			public Object getIdentity() {
+				return null;
+			}
+
+			//			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);
 //				System.out.println("INPUT (y/n)");
@@ -159,6 +171,10 @@ public class ActionDefinitionUtils {
 
 				yield !evaluateTrigger(inner, context);
 			}
+			case All all -> all.stream()
+					.filter(ITrigger.class::isInstance)
+					.map(ITrigger.class::cast).allMatch(a -> evaluateTrigger(a, context));
+			case NotRunningAlready ignored -> context.notRunningAlready();
 		};
 	}
 

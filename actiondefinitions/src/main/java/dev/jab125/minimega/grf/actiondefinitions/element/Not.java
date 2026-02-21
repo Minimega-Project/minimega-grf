@@ -43,10 +43,6 @@ public final class Not extends ACElement implements ITrigger {
 		super(children);
 	}
 
-	public OnActions getOnActions() {
-		return getFirstOf(OnActions.class).orElseThrow();
-	}
-
 	@Override
 	public String getId() {
 		return "Not";

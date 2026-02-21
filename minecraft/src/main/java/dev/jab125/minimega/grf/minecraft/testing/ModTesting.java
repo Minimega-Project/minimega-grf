@@ -160,7 +160,7 @@ public class ModTesting implements ModInitializer {
 					public void replaceDialogWith(String dialog) {
 						if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
 							ServerPlayNetworking.send(player, new DialogPayload(dialog == null ? null : Component.literal(dialog), false));
-						} else {
+						} else if (dialog != null) {
 							current = current == ChatFormatting.DARK_GREEN ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN;
 							player.sendSystemMessage(Component.literal(dialog).withStyle(current));
 						}

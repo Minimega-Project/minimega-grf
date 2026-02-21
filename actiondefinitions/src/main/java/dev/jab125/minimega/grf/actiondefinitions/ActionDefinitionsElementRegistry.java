@@ -9,6 +9,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("ActionDefinitions", new ActionDefinitions.Type());
 		register("All", new All.Type());
 		register("Always", new Always.Type());
+		register("Any", new Any.Type());
 		register("AppendToDialog", new AppendToDialog.Type());
 		register("Cancel", new Cancel.Type());
 		register("CloseDialog", new CloseDialog.Type());

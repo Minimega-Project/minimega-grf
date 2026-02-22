@@ -45,7 +45,7 @@ public final class Any extends ACElement implements ITrigger {
 
 	@Override
 	public String getId() {
-		return "Or";
+		return "Any";
 	}
 
 	public static class Type implements ACType<Any> {

@@ -63,6 +63,7 @@ import dev.jab125.minimega.grf.element.__ROOT__;
 import dev.jab125.minimega.grf.minecraft.ModInit;
 import dev.jab125.minimega.grf.minecraft.event.Events;
 import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
+import it.unimi.dsi.fastutil.Pair;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
@@ -86,6 +87,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
 
@@ -129,7 +131,8 @@ public class ModTesting implements ModInitializer {
 			List<EnteredNamedArea> list = actionDefinitions.getOnActions().streamOf(EnteredNamedArea.class).toList();
 			for (EnteredNamedArea enteredNamedArea : list) {
 				var context = new Context() {
-					private final Object identity = enteredNamedArea;
+					record Identity(UUID uuid, Object namedArea) {}
+					private final Object identity = new Identity(player.getUUID(), enteredNamedArea);
 
 					@Override
 					public void runAsync(ActionRuntime runtime) {
@@ -185,7 +188,10 @@ public class ModTesting implements ModInitializer {
 
 					@Override
 					public boolean notRunningAlready() {
-						return ModTesting.runtime.runtimes.stream().noneMatch(a -> a.getIdentity() == identity);
+						return ModTesting.runtime.runtimes.stream().noneMatch(a -> {
+							System.out.println(a.getIdentity() + ", " + identity + ": " + a.getIdentity().equals(identity));
+							return a.getIdentity().equals(identity);
+						});
 					}
 
 					@Override
@@ -202,6 +208,7 @@ public class ModTesting implements ModInitializer {
 					Effects effects = enteredNamedArea.getEffects();
 					List<Effect> effectsAsList = (List<Effect>) effects.streamOf((Class) Effect.class).toList();
 					ActionRuntime actionRuntime = new ActionRuntime(effectsAsList, context);
+					System.out.println("Initiating " + effects);
 					ModTesting.runtime.addRuntime(actionRuntime);
 				}
 			}

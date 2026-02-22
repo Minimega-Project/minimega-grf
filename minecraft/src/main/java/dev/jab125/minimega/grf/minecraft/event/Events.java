@@ -47,13 +47,13 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface Events {
-	Event<EnteredNamedAreaCallback> ENTERED_NAMED_AREA = EventFactory.createArrayBacked(EnteredNamedAreaCallback.class, enteredNamedAreaCallbacks -> (player, area) -> {
+	Event<EnteredNamedAreaCallback> ENTERED_NAMED_AREA = EventFactory.createArrayBacked(EnteredNamedAreaCallback.class, enteredNamedAreaCallbacks -> (player, currentNamedArea, previousNamedArea) -> {
 		for (EnteredNamedAreaCallback enteredNamedAreaCallback : enteredNamedAreaCallbacks) {
-			enteredNamedAreaCallback.call(player, area);
+			enteredNamedAreaCallback.call(player, currentNamedArea, previousNamedArea);
 		}
 	});
 
 	interface EnteredNamedAreaCallback {
-		void call(ServerPlayer player, NamedArea area);
+		void call(ServerPlayer player, NamedArea currentNamedArea, NamedArea previousNamedArea);
 	}
 }

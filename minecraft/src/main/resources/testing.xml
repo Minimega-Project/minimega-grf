@@ -1,5 +1,13 @@
 <ActionDefinitions>
     <OnActions>
+        <PlayerLeftServer>
+            <Trigger>
+                <Always/>
+            </Trigger>
+            <Effects>
+                <StopAll/>
+            </Effects>
+        </PlayerLeftServer>
         <EnteredNamedArea>
             <Trigger>
                 <Always/>
@@ -76,8 +84,14 @@
 <!--                &lt;!&ndash;</All>&ndash;&gt;-->
                 <All>
                     <Any>
-                        <CurrentNamedArea>conduitChestArea</CurrentNamedArea>
-                        <CurrentNamedArea>conduitArea</CurrentNamedArea>
+                        <All>
+                            <CurrentNamedArea>conduitChestArea</CurrentNamedArea>
+                            <Not><PreviousNamedArea>conduitArea</PreviousNamedArea></Not>
+                        </All>
+                        <All>
+                            <CurrentNamedArea>conduitArea</CurrentNamedArea>
+                            <Not><PreviousNamedArea>conduitChestArea</PreviousNamedArea></Not>
+                        </All>
                     </Any>
                     <NotRunningAlready/>
                 </All>

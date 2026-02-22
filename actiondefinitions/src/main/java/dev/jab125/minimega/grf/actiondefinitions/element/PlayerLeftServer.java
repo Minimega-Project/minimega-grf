@@ -31,38 +31,39 @@
  * licensed solely under the GNU General Public License, version 3 or
  * later, without any additional exceptions.
  */
-package dev.jab125.minimega.grf.actiondefinitions;
+package dev.jab125.minimega.grf.actiondefinitions.element;
 
-import dev.jab125.minimega.grf.element.NamedArea;
+import dev.jab125.minimega.grf.element.Element;
+import org.w3c.dom.Document;
 
-public interface Context {
-	default boolean completedTutorial(String tutorial) {
-		return false;
+import java.util.List;
+
+public final class PlayerLeftServer extends ACElement implements OnAction {
+	public PlayerLeftServer(List<Element> children) {
+		super(children);
 	}
 
-	void runAsync(ActionRuntime runtime);
+	@Override
+	public String getId() {
+		return "PlayerLeftServer";
+	}
 
-	NamedArea currentNamedArea();
+	public static class Type implements ACType<PlayerLeftServer> {
+		@Override
+		public PlayerLeftServer parseSelf(org.w3c.dom.Element element, List<Element> children) {
+			return new PlayerLeftServer(children);
+		}
 
-	NamedArea previousNamedArea();
+		@Override
+		public org.w3c.dom.Element serializeSelf(
+				Document document,
+				PlayerLeftServer self,
+				List<org.w3c.dom.Element> children
+		) {
+			org.w3c.dom.Element element = document.createElement(self.getId());
+			children.forEach(element::appendChild);
 
-	void log(String text);
-
-	void populateAllContainersInsideOfNamedArea();
-
-	void replaceDialogWith(String dialog);
-
-	void appendDialog(String text);
-
-	void hardcodedStatusMessage();
-
-	boolean notRunningAlready();
-
-	Object getIdentity();
-
-	Object getOwner();
-
-	void stopAll();
-
-	//void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel);
+			return element;
+		}
+	}
 }

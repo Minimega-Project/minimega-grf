@@ -122,9 +122,9 @@ public class ModInit implements ModInitializer {
 			if (grf.getFirstOf(LevelRules.class).isEmpty()) return;
 			List<NamedArea> list = ((GrfContainer) serverLevel).getGrf().getLevelRules().streamOf(NamedArea.class).toList();
 			for (ServerPlayer player : serverLevel.players()) {
+					NamedArea attached = player.getAttached(CURRENT_NAMED_AREA);
 				l:
 				{
-					NamedArea attached = player.getAttached(CURRENT_NAMED_AREA);
 					for (NamedArea namedArea : list) {
 						AABB aabb = fromNamedArea(namedArea);
 						if (aabb.intersects(player.getBoundingBox())) {
@@ -132,7 +132,7 @@ public class ModInit implements ModInitializer {
 							if (attached == null || !attached.name.equals(namedArea.name)) {
 								//System.out.println("PLAYER ENTERED A ZONE");
 								player.setAttached(CURRENT_NAMED_AREA, namedArea);
-								Events.ENTERED_NAMED_AREA.invoker().call(player, namedArea);
+								Events.ENTERED_NAMED_AREA.invoker().call(player, namedArea, attached);
 							}
 							break l;
 						} else {
@@ -141,7 +141,7 @@ public class ModInit implements ModInitializer {
 					}
 					//System.out.println("PLAYER NOT IN A NAMED AREA");
 					player.setAttached(CURRENT_NAMED_AREA, null);
-					if (attached != null) Events.ENTERED_NAMED_AREA.invoker().call(player, null);
+					if (attached != null) Events.ENTERED_NAMED_AREA.invoker().call(player, null, attached);
 				}
 			}
 

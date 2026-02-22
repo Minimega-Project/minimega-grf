@@ -54,7 +54,9 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
 import dev.jab125.minimega.grf.actiondefinitions.element.Effects;
 import dev.jab125.minimega.grf.actiondefinitions.element.EnteredNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ITrigger;
+import dev.jab125.minimega.grf.actiondefinitions.element.PlayerLeftServer;
 import dev.jab125.minimega.grf.actiondefinitions.element.Proceed;
+import dev.jab125.minimega.grf.actiondefinitions.element.Trigger;
 import dev.jab125.minimega.grf.element.AddItem;
 import dev.jab125.minimega.grf.element.Element;
 import dev.jab125.minimega.grf.element.NamedArea;
@@ -65,6 +67,7 @@ import dev.jab125.minimega.grf.minecraft.event.Events;
 import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
 import it.unimi.dsi.fastutil.Pair;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -88,6 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
 
@@ -127,90 +131,19 @@ public class ModTesting implements ModInitializer {
 			throw new RuntimeException(e);
 		}
 
-		Events.ENTERED_NAMED_AREA.register((player, area) -> {
+		ServerPlayerEvents.LEAVE.register(player -> {
+			List<PlayerLeftServer> list = actionDefinitions.getOnActions().streamOf(PlayerLeftServer.class).toList();
+			for (PlayerLeftServer enteredNamedArea : list) {
+				var context = new PlayerContext(player, enteredNamedArea, player.getAttached(ModInit.CURRENT_NAMED_AREA), player.getAttached(ModInit.CURRENT_NAMED_AREA));
+				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffects(), enteredNamedArea);
+			}
+		});
+
+		Events.ENTERED_NAMED_AREA.register((player, current, previous) -> {
 			List<EnteredNamedArea> list = actionDefinitions.getOnActions().streamOf(EnteredNamedArea.class).toList();
 			for (EnteredNamedArea enteredNamedArea : list) {
-				var context = new Context() {
-					record Identity(UUID uuid, Object namedArea) {}
-					private final Object identity = new Identity(player.getUUID(), enteredNamedArea);
-
-					@Override
-					public void runAsync(ActionRuntime runtime) {
-						ModTesting.runtime.addRuntime(runtime);
-					}
-
-					@Override
-					public NamedArea currentNamedArea() {
-						return area;
-					}
-
-					@Override
-					public NamedArea previousNamedArea() {
-						return null;
-					}
-
-					@Override
-					public void log(String text) {
-						player.sendSystemMessage(Component.literal(text));
-					}
-
-					@Override
-					public void populateAllContainersInsideOfNamedArea() {
-						ModTesting.poplulateContainersInsideOfNamedArea(player, area);
-					}
-
-					@Override
-					public void replaceDialogWith(String dialog) {
-						if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
-							ServerPlayNetworking.send(player, new DialogPayload(dialog == null ? null : Component.literal(dialog), false));
-						} else if (dialog != null) {
-							current = current == ChatFormatting.DARK_GREEN ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN;
-							player.sendSystemMessage(Component.literal(dialog).withStyle(current));
-						}
-					}
-
-					@Override
-					public void appendDialog(String text) {
-						if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
-							ServerPlayNetworking.send(player, new DialogPayload(Component.literal(text), true));
-						} else {
-							player.sendSystemMessage(Component.literal(text).withStyle(current));
-						}
-					}
-
-					//private ChatFormatting[] formattings = {ChatFormatting.DARK_GREEN, ChatFormatting.BLUE};
-					private ChatFormatting current = ChatFormatting.DARK_GREEN;
-
-					@Override
-					public void hardcodedStatusMessage() {
-						player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
-					}
-
-					@Override
-					public boolean notRunningAlready() {
-						return ModTesting.runtime.runtimes.stream().noneMatch(a -> {
-							System.out.println(a.getIdentity() + ", " + identity + ": " + a.getIdentity().equals(identity));
-							return a.getIdentity().equals(identity);
-						});
-					}
-
-					@Override
-					public Object getIdentity() {
-						return identity;
-					}
-
-					@Override
-					public Object getOwner() {
-						return player;
-					}
-				};
-				if (ActionDefinitionUtils.evaluateTrigger((ITrigger) enteredNamedArea.getTrigger().iterator().next(), context)) {
-					Effects effects = enteredNamedArea.getEffects();
-					List<Effect> effectsAsList = (List<Effect>) effects.streamOf((Class) Effect.class).toList();
-					ActionRuntime actionRuntime = new ActionRuntime(effectsAsList, context);
-					System.out.println("Initiating " + effects);
-					ModTesting.runtime.addRuntime(actionRuntime);
-				}
+				var context = new PlayerContext(player, enteredNamedArea, previous, current);
+				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffects(), enteredNamedArea);
 			}
 		});
 		ServerTickEvents.START_SERVER_TICK.register(server -> {
@@ -220,6 +153,14 @@ public class ModTesting implements ModInitializer {
 			String content = playerChatMessage.signedBody().content();
 			return !runtime.userInput(content, serverPlayer);
 		});
+	}
+
+	private void execute(PlayerContext context, Trigger trigger, Effects effects, Object identity) {
+		if (ActionDefinitionUtils.evaluateTrigger((ITrigger) trigger.iterator().next(), context)) {
+			List<Effect> effectsAsList = (List<Effect>) effects.streamOf((Class) Effect.class).toList();
+			ActionRuntime actionRuntime = new ActionRuntime(effectsAsList, context);
+			ModTesting.runtime.addRuntime(actionRuntime);
+		}
 	}
 
 	private static void poplulateContainersInsideOfNamedArea(ServerPlayer player, NamedArea area) {
@@ -253,7 +194,7 @@ public class ModTesting implements ModInitializer {
 	}
 
 	public static class Runtime {
-		List<ActionRuntime> runtimes = new ArrayList<>();
+		List<ActionRuntime> runtimes = new CopyOnWriteArrayList<>();
 
 		public void addRuntime(ActionRuntime runtime) {
 			this.runtimes.add(runtime);
@@ -271,7 +212,7 @@ public class ModTesting implements ModInitializer {
 		public boolean userInput(String content, ServerPlayer player) {
 			boolean absorb = false;
 			for (ActionRuntime runtime : List.copyOf(runtimes)) {
-				if (runtime.getOwner() == player && runtime.isAwaitingUserInput()) {
+				if (runtime.getOwner().equals(player.getUUID()) && runtime.isAwaitingUserInput()) {
 					Optional<Proceed> proceed = runtime.getProceedCancel().getFirstOf(Proceed.class);
 					Optional<Cancel> cancel = runtime.getProceedCancel().getFirstOf(Cancel.class);
 					labe:
@@ -292,6 +233,99 @@ public class ModTesting implements ModInitializer {
 				}
 			}
 			return absorb;
+		}
+	}
+
+	private static class PlayerContext implements Context {
+		private final ServerPlayer player;
+		private final NamedArea area;
+		private final NamedArea previousNamedArea;
+
+		public PlayerContext(ServerPlayer player, Object sp, NamedArea previousNamedArea, NamedArea area) {
+			this.player = player;
+			this.area = area;
+			identity = new Identity(player.getUUID(), sp);
+			current = ChatFormatting.DARK_GREEN;
+			this.previousNamedArea = previousNamedArea;
+		}
+
+		record Identity(UUID uuid, Object namedArea) {}
+
+		private final Object identity;
+
+		@Override
+		public void runAsync(ActionRuntime runtime) {
+			ModTesting.runtime.addRuntime(runtime);
+		}
+
+		@Override
+		public NamedArea currentNamedArea() {
+			return area;
+		}
+
+		@Override
+		public NamedArea previousNamedArea() {
+			return previousNamedArea;
+		}
+
+		@Override
+		public void log(String text) {
+			player.sendSystemMessage(Component.literal(text));
+		}
+
+		@Override
+		public void populateAllContainersInsideOfNamedArea() {
+			ModTesting.poplulateContainersInsideOfNamedArea(player, area);
+		}
+
+		@Override
+		public void replaceDialogWith(String dialog) {
+			if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
+				ServerPlayNetworking.send(player, new DialogPayload(dialog == null ? null : Component.literal(dialog), false));
+			} else if (dialog != null) {
+				current = current == ChatFormatting.DARK_GREEN ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN;
+				player.sendSystemMessage(Component.literal(dialog).withStyle(current));
+			}
+		}
+
+		@Override
+		public void appendDialog(String text) {
+			if (ServerPlayNetworking.canSend(player, DialogPayload.TYPE)) {
+				ServerPlayNetworking.send(player, new DialogPayload(Component.literal(text), true));
+			} else {
+				player.sendSystemMessage(Component.literal(text).withStyle(current));
+			}
+		}
+
+		//private ChatFormatting[] formattings = {ChatFormatting.DARK_GREEN, ChatFormatting.BLUE};
+		private ChatFormatting current;
+
+		@Override
+		public void hardcodedStatusMessage() {
+			player.sendSystemMessage(Component.literal("Entered named area " + (area == null ? "null" : area.name)), true);
+		}
+
+		@Override
+		public boolean notRunningAlready() {
+			return ModTesting.runtime.runtimes.stream().noneMatch(a -> {
+				System.out.println(a.getIdentity() + ", " + identity + ": " + a.getIdentity().equals(identity));
+				return a.getIdentity().equals(identity);
+			});
+		}
+
+		@Override
+		public Object getIdentity() {
+			return identity;
+		}
+
+		@Override
+		public UUID getOwner() {
+			return player.getUUID();
+		}
+
+		@Override
+		public void stopAll() {
+			ModTesting.runtime.runtimes.removeIf(a -> getOwner().equals(a.getOwner()));
 		}
 	}
 }

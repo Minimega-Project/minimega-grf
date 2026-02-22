@@ -14,6 +14,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Not;
 import dev.jab125.minimega.grf.actiondefinitions.element.NotRunningAlready;
 import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
 import dev.jab125.minimega.grf.actiondefinitions.element.Any;
+import dev.jab125.minimega.grf.actiondefinitions.element.PreviousNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.Proceed;
 import dev.jab125.minimega.grf.actiondefinitions.element.Trigger;
 import dev.jab125.minimega.grf.element.Element;
@@ -104,6 +105,11 @@ public class ActionDefinitionUtils {
 				return null;
 			}
 
+			@Override
+			public void stopAll() {
+
+			}
+
 			//			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);
@@ -184,6 +190,7 @@ public class ActionDefinitionUtils {
 					.filter(ITrigger.class::isInstance)
 					.map(ITrigger.class::cast).anyMatch(a -> evaluateTrigger(a, context));
 			case NotRunningAlready ignored -> context.notRunningAlready();
+			case PreviousNamedArea previousNamedArea -> context.previousNamedArea() != null && previousNamedArea.namedArea.equals(context.previousNamedArea().name);
 		};
 	}
 

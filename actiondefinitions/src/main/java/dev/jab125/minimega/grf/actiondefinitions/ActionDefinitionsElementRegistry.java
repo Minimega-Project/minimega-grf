@@ -26,9 +26,12 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("Not", new Not.Type());
 		register("NotRunningAlready", new NotRunningAlready.Type());
 		register("OnActions", new OnActions.Type());
+		register("PlayerLeftServer", new PlayerLeftServer.Type());
 		register("PopulateAllContainersInsideOfNamedArea", new PopulateAllContainersInsideOfNamedArea.Type());
+		register("PreviousNamedArea", new PreviousNamedArea.Type());
 		register("Proceed", new Proceed.Type());
 		register("ProceedCancel", new ProceedCancel.Type());
+		register("StopAll", new StopAll.Type());
 		register("Trigger", new Trigger.Type());
 	}
 }

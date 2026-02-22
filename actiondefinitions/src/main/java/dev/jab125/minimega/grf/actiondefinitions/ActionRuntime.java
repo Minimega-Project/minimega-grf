@@ -12,6 +12,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.HardcodedStatusMessage;
 import dev.jab125.minimega.grf.actiondefinitions.element.Log;
 import dev.jab125.minimega.grf.actiondefinitions.element.PopulateAllContainersInsideOfNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ProceedCancel;
+import dev.jab125.minimega.grf.actiondefinitions.element.StopAll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,12 @@ public class ActionRuntime {
 						this.awaitingUserInput = true;
 						this.proceedCancel = proceedCancel;
 						return true;
+					}
+					case StopAll ignored -> {
+						context.replaceDialogWith(null);
+						context.stopAll();
+						exited = true;
+						return false;
 					}
 				}
 			} finally {

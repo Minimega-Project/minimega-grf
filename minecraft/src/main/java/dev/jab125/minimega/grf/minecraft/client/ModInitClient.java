@@ -122,7 +122,7 @@ public class ModInitClient implements ClientModInitializer {
 			if (!payload.append()) {
 				currentTutorialMessage = payload.message().orElse(null);
 			} else {
-				currentTutorialMessage = currentTutorialMessage.copy().append("\n").append(payload.message().orElseThrow());
+				currentTutorialMessage = currentTutorialMessage == null ? payload.message().orElseThrow() : currentTutorialMessage.copy().append("\n").append(payload.message().orElseThrow());
 			}
 		});
 

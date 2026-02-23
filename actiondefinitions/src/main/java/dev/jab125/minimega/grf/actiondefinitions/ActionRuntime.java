@@ -10,9 +10,12 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
 import dev.jab125.minimega.grf.actiondefinitions.element.ExitDialogSequence;
 import dev.jab125.minimega.grf.actiondefinitions.element.HardcodedStatusMessage;
 import dev.jab125.minimega.grf.actiondefinitions.element.Log;
+import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
 import dev.jab125.minimega.grf.actiondefinitions.element.PopulateAllContainersInsideOfNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ProceedCancel;
 import dev.jab125.minimega.grf.actiondefinitions.element.StopAll;
+import dev.jab125.minimega.grf.actiondefinitions.element.WaitForOnAction;
+import dev.jab125.minimega.grf.element.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +52,10 @@ public class ActionRuntime {
 			stop--;
 			return true;
 		}
+
 		while (cursor < effects.size()) {
 			try {
+				context.setCurrentRuntime(this);
 //					try {
 //						Thread.sleep(1000);
 //					} catch (InterruptedException e) {
@@ -100,9 +105,15 @@ public class ActionRuntime {
 						exited = true;
 						return false;
 					}
+					case WaitForOnAction waitForOnAction -> {
+						context.addTransientOnAction((OnAction) waitForOnAction.getFirstOf((Class<Element>) (Object) OnAction.class).orElseThrow());
+						this.suspended = true;
+						return true;
+					}
 				}
 			} finally {
 				cursor++;
+				context.setCurrentRuntime(null);
 			}
 		}
 		return false;

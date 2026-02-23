@@ -41,6 +41,7 @@
  */
 package dev.jab125.minimega.grf.minecraft.testing;
 
+import com.google.common.collect.Streams;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.jab125.minimega.grf.GrfContainer;
@@ -54,6 +55,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
 import dev.jab125.minimega.grf.actiondefinitions.element.Effects;
 import dev.jab125.minimega.grf.actiondefinitions.element.EnteredNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ITrigger;
+import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
 import dev.jab125.minimega.grf.actiondefinitions.element.PlayerLeftServer;
 import dev.jab125.minimega.grf.actiondefinitions.element.Proceed;
 import dev.jab125.minimega.grf.actiondefinitions.element.Trigger;
@@ -61,7 +63,6 @@ import dev.jab125.minimega.grf.element.AddItem;
 import dev.jab125.minimega.grf.element.Element;
 import dev.jab125.minimega.grf.element.NamedArea;
 import dev.jab125.minimega.grf.element.PopulateContainer;
-import dev.jab125.minimega.grf.element.__ROOT__;
 import dev.jab125.minimega.grf.minecraft.ModInit;
 import dev.jab125.minimega.grf.minecraft.event.Events;
 import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
@@ -92,6 +93,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
 
@@ -132,18 +134,18 @@ public class ModTesting implements ModInitializer {
 		}
 
 		ServerPlayerEvents.LEAVE.register(player -> {
-			List<PlayerLeftServer> list = actionDefinitions.getOnActions().streamOf(PlayerLeftServer.class).toList();
+			List<PlayerLeftServer> list = runtime.getOnActions(PlayerLeftServer.class, player.getUUID()).toList();
 			for (PlayerLeftServer enteredNamedArea : list) {
 				var context = new PlayerContext(player, enteredNamedArea, player.getAttached(ModInit.CURRENT_NAMED_AREA), player.getAttached(ModInit.CURRENT_NAMED_AREA));
-				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffects(), enteredNamedArea);
+				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffectsOrNull(), enteredNamedArea);
 			}
 		});
 
 		Events.ENTERED_NAMED_AREA.register((player, current, previous) -> {
-			List<EnteredNamedArea> list = actionDefinitions.getOnActions().streamOf(EnteredNamedArea.class).toList();
+			List<EnteredNamedArea> list = runtime.getOnActions(EnteredNamedArea.class, player.getUUID()).toList();
 			for (EnteredNamedArea enteredNamedArea : list) {
 				var context = new PlayerContext(player, enteredNamedArea, previous, current);
-				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffects(), enteredNamedArea);
+				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffectsOrNull(), enteredNamedArea);
 			}
 		});
 		ServerTickEvents.START_SERVER_TICK.register(server -> {
@@ -157,9 +159,15 @@ public class ModTesting implements ModInitializer {
 
 	private void execute(PlayerContext context, Trigger trigger, Effects effects, Object identity) {
 		if (ActionDefinitionUtils.evaluateTrigger((ITrigger) trigger.iterator().next(), context)) {
-			List<Effect> effectsAsList = (List<Effect>) effects.streamOf((Class) Effect.class).toList();
-			ActionRuntime actionRuntime = new ActionRuntime(effectsAsList, context);
-			ModTesting.runtime.addRuntime(actionRuntime);
+			Optional<Pair<ActionRuntime, OnAction>> temporary = ModTesting.runtime.suspensionOnActions.stream().filter(a -> a.right().equals(identity)).findFirst();
+			if (temporary.isPresent()) {
+				ModTesting.runtime.suspensionOnActions.remove(temporary.get());
+				temporary.get().left().resume();
+			} else {
+				List<Effect> effectsAsList = (List<Effect>) effects.streamOf((Class) Effect.class).toList();
+				ActionRuntime actionRuntime = new ActionRuntime(effectsAsList, context);
+				ModTesting.runtime.addRuntime(actionRuntime);
+			}
 		}
 	}
 
@@ -195,7 +203,7 @@ public class ModTesting implements ModInitializer {
 
 	public static class Runtime {
 		List<ActionRuntime> runtimes = new CopyOnWriteArrayList<>();
-
+		private final List<Pair<ActionRuntime, OnAction>> suspensionOnActions = new CopyOnWriteArrayList<>();
 		public void addRuntime(ActionRuntime runtime) {
 			this.runtimes.add(runtime);
 		}
@@ -234,12 +242,17 @@ public class ModTesting implements ModInitializer {
 			}
 			return absorb;
 		}
+
+		public <T extends Element> Stream<T> getOnActions(Class<T> clazz, UUID playerUUID) {
+			return Streams.concat(actionDefinitions.getOnActions().streamOf(clazz), suspensionOnActions.stream().filter(a -> a.left().getOwner().equals(playerUUID)).map(Pair::right).filter(clazz::isInstance).map(clazz::cast));
+		}
 	}
 
 	private static class PlayerContext implements Context {
 		private final ServerPlayer player;
 		private final NamedArea area;
 		private final NamedArea previousNamedArea;
+		private final ThreadLocal<ActionRuntime> actionRuntime = new ThreadLocal<>();
 
 		public PlayerContext(ServerPlayer player, Object sp, NamedArea previousNamedArea, NamedArea area) {
 			this.player = player;
@@ -308,7 +321,7 @@ public class ModTesting implements ModInitializer {
 		@Override
 		public boolean notRunningAlready() {
 			return ModTesting.runtime.runtimes.stream().noneMatch(a -> {
-				System.out.println(a.getIdentity() + ", " + identity + ": " + a.getIdentity().equals(identity));
+			//	System.out.println(a.getIdentity() + ", " + identity + ": " + a.getIdentity().equals(identity));
 				return a.getIdentity().equals(identity);
 			});
 		}
@@ -326,6 +339,16 @@ public class ModTesting implements ModInitializer {
 		@Override
 		public void stopAll() {
 			ModTesting.runtime.runtimes.removeIf(a -> getOwner().equals(a.getOwner()));
+		}
+
+		@Override
+		public void addTransientOnAction(OnAction onAction) {
+			ModTesting.runtime.suspensionOnActions.add(Pair.of(actionRuntime.get(), onAction));
+		}
+
+		@Override
+		public void setCurrentRuntime(ActionRuntime runtime) {
+			actionRuntime.set(runtime);
 		}
 	}
 }

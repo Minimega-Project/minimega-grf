@@ -110,6 +110,16 @@ public class ActionDefinitionUtils {
 
 			}
 
+			@Override
+			public void addTransientOnAction(OnAction onAction) {
+
+			}
+
+			@Override
+			public void setCurrentRuntime(ActionRuntime runtime) {
+
+			}
+
 			//			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);

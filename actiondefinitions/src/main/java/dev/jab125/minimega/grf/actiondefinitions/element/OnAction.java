@@ -43,4 +43,8 @@ public interface OnAction {
 	default Effects getEffects() {
 		return ((Element)this).getFirstOf(Effects.class).orElseThrow();
 	}
+
+	default Effects getEffectsOrNull() {
+		return ((Element)this).getFirstOf(Effects.class).orElse(null);
+	}
 }

@@ -33,5 +33,6 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("ProceedCancel", new ProceedCancel.Type());
 		register("StopAll", new StopAll.Type());
 		register("Trigger", new Trigger.Type());
+		register("WaitForOnAction", new WaitForOnAction.Type());
 	}
 }

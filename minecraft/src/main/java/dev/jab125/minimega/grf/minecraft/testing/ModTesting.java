@@ -50,6 +50,7 @@ import dev.jab125.minimega.grf.actiondefinitions.ActionDefinitionsElementRegistr
 import dev.jab125.minimega.grf.actiondefinitions.ActionRuntime;
 import dev.jab125.minimega.grf.actiondefinitions.Context;
 import dev.jab125.minimega.grf.actiondefinitions.element.ActionDefinitions;
+import dev.jab125.minimega.grf.actiondefinitions.element.BlockActivated;
 import dev.jab125.minimega.grf.actiondefinitions.element.Cancel;
 import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
 import dev.jab125.minimega.grf.actiondefinitions.element.Effects;
@@ -70,6 +71,7 @@ import it.unimi.dsi.fastutil.Pair;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -83,6 +85,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gameevent.GameEventListenerRegistry;
 import net.minecraft.world.phys.AABB;
 import org.xml.sax.SAXException;
 
@@ -136,7 +140,7 @@ public class ModTesting implements ModInitializer {
 		ServerPlayerEvents.LEAVE.register(player -> {
 			List<PlayerLeftServer> list = runtime.getOnActions(PlayerLeftServer.class, player.getUUID()).toList();
 			for (PlayerLeftServer enteredNamedArea : list) {
-				var context = new PlayerContext(player, enteredNamedArea, player.getAttached(ModInit.CURRENT_NAMED_AREA), player.getAttached(ModInit.CURRENT_NAMED_AREA));
+				var context = new PlayerContext(player, enteredNamedArea, player.getAttached(ModInit.CURRENT_NAMED_AREA), player.getAttached(ModInit.CURRENT_NAMED_AREA), null);
 				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffectsOrNull(), enteredNamedArea);
 			}
 		});
@@ -144,7 +148,7 @@ public class ModTesting implements ModInitializer {
 		Events.ENTERED_NAMED_AREA.register((player, current, previous) -> {
 			List<EnteredNamedArea> list = runtime.getOnActions(EnteredNamedArea.class, player.getUUID()).toList();
 			for (EnteredNamedArea enteredNamedArea : list) {
-				var context = new PlayerContext(player, enteredNamedArea, previous, current);
+				var context = new PlayerContext(player, enteredNamedArea, previous, current, null);
 				execute(context, enteredNamedArea.getTrigger(), enteredNamedArea.getEffectsOrNull(), enteredNamedArea);
 			}
 		});
@@ -154,6 +158,17 @@ public class ModTesting implements ModInitializer {
 		ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((playerChatMessage, serverPlayer, bound) -> {
 			String content = playerChatMessage.signedBody().content();
 			return !runtime.userInput(content, serverPlayer);
+		});
+		Events.GAME_EVENT.register((holder, vec3, context_) -> {
+			if (context_.sourceEntity() instanceof ServerPlayer player) {
+				if (GameEvent.BLOCK_ACTIVATE.is(holder)) {
+					List<BlockActivated> list = runtime.getOnActions(BlockActivated.class, player.getUUID()).toList();
+					for (BlockActivated blockActivated : list) {
+						var context = new PlayerContext(player, blockActivated, player.getAttached(ModInit.CURRENT_NAMED_AREA), player.getAttached(ModInit.CURRENT_NAMED_AREA), BlockPos.containing(vec3));
+						execute(context, blockActivated.getTrigger(), blockActivated.getEffectsOrNull(), blockActivated);
+					}
+				}
+			}
 		});
 	}
 
@@ -253,13 +268,15 @@ public class ModTesting implements ModInitializer {
 		private final NamedArea area;
 		private final NamedArea previousNamedArea;
 		private final ThreadLocal<ActionRuntime> actionRuntime = new ThreadLocal<>();
+		private final BlockPos interactionPosition;
 
-		public PlayerContext(ServerPlayer player, Object sp, NamedArea previousNamedArea, NamedArea area) {
+		public PlayerContext(ServerPlayer player, Object sp, NamedArea previousNamedArea, NamedArea area, BlockPos interactionPosition) {
 			this.player = player;
 			this.area = area;
 			identity = new Identity(player.getUUID(), sp);
 			current = ChatFormatting.DARK_GREEN;
 			this.previousNamedArea = previousNamedArea;
+			this.interactionPosition = interactionPosition;
 		}
 
 		record Identity(UUID uuid, Object namedArea) {}
@@ -349,6 +366,11 @@ public class ModTesting implements ModInitializer {
 		@Override
 		public void setCurrentRuntime(ActionRuntime runtime) {
 			actionRuntime.set(runtime);
+		}
+
+		@Override
+		public boolean isInteractionBlockPosition(int x, int y, int z) {
+			return interactionPosition != null && interactionPosition.getX() == x && interactionPosition.getY() == y && interactionPosition.getZ() == z;
 		}
 	}
 }

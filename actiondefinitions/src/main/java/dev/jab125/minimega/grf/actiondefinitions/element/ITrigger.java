@@ -33,5 +33,5 @@
  */
 package dev.jab125.minimega.grf.actiondefinitions.element;
 
-public sealed interface ITrigger permits All, Always, Any, CurrentNamedArea, Not, NotRunningAlready, PreviousNamedArea {
+public sealed interface ITrigger permits All, Always, Any, CurrentNamedArea, InteractionBlockPosition, Not, NotRunningAlready, PreviousNamedArea {
 }

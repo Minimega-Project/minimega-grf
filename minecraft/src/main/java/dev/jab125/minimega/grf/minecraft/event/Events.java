@@ -44,7 +44,10 @@ package dev.jab125.minimega.grf.minecraft.event;
 import dev.jab125.minimega.grf.element.NamedArea;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 public interface Events {
 	Event<EnteredNamedAreaCallback> ENTERED_NAMED_AREA = EventFactory.createArrayBacked(EnteredNamedAreaCallback.class, enteredNamedAreaCallbacks -> (player, currentNamedArea, previousNamedArea) -> {
@@ -53,7 +56,17 @@ public interface Events {
 		}
 	});
 
+	Event<GameEventCallback> GAME_EVENT = EventFactory.createArrayBacked(GameEventCallback.class, gameEventCallbacks -> (holder, vec3, context) -> {
+		for (GameEventCallback gameEventCallback : gameEventCallbacks) {
+			gameEventCallback.call(holder, vec3, context);
+		}
+	});
+
 	interface EnteredNamedAreaCallback {
 		void call(ServerPlayer player, NamedArea currentNamedArea, NamedArea previousNamedArea);
+	}
+
+	interface GameEventCallback {
+		void call(Holder<GameEvent> holder, Vec3 vec3, GameEvent.Context context);
 	}
 }

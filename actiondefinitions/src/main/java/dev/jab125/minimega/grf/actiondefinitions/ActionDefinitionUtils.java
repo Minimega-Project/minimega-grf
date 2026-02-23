@@ -10,6 +10,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Effect;
 import dev.jab125.minimega.grf.actiondefinitions.element.Effects;
 import dev.jab125.minimega.grf.actiondefinitions.element.EnteredNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ITrigger;
+import dev.jab125.minimega.grf.actiondefinitions.element.InteractionBlockPosition;
 import dev.jab125.minimega.grf.actiondefinitions.element.Not;
 import dev.jab125.minimega.grf.actiondefinitions.element.NotRunningAlready;
 import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
@@ -120,6 +121,11 @@ public class ActionDefinitionUtils {
 
 			}
 
+			@Override
+			public boolean isInteractionBlockPosition(int x, int y, int z) {
+				return false;
+			}
+
 			//			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);
@@ -201,6 +207,7 @@ public class ActionDefinitionUtils {
 					.map(ITrigger.class::cast).anyMatch(a -> evaluateTrigger(a, context));
 			case NotRunningAlready ignored -> context.notRunningAlready();
 			case PreviousNamedArea previousNamedArea -> context.previousNamedArea() != null && previousNamedArea.namedArea.equals(context.previousNamedArea().name);
+			case InteractionBlockPosition interactionBlockPosition -> context.isInteractionBlockPosition(interactionBlockPosition.x, interactionBlockPosition.y, interactionBlockPosition.z);
 		};
 	}
 

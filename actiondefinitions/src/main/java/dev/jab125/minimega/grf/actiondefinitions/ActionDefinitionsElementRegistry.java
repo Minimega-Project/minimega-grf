@@ -11,6 +11,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("Always", new Always.Type());
 		register("Any", new Any.Type());
 		register("AppendToDialog", new AppendToDialog.Type());
+		register("BlockActivated", new BlockActivated.Type());
 		register("Cancel", new Cancel.Type());
 		register("CloseDialog", new CloseDialog.Type());
 		register("ContinueText", new ContinueText.Type());
@@ -22,6 +23,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("EnteredNamedArea", new EnteredNamedArea.Type());
 		register("ExitDialogSequence", new ExitDialogSequence.Type());
 		register("HardcodedStatusMessage", new HardcodedStatusMessage.Type());
+		register("InteractionBlockPosition", new InteractionBlockPosition.Type());
 		register("Log", new Log.Type());
 		register("Not", new Not.Type());
 		register("NotRunningAlready", new NotRunningAlready.Type());

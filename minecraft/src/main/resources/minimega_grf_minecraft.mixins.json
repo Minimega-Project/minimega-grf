@@ -4,6 +4,7 @@
   "package": "dev.jab125.minimega.grf.minecraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "GameEventDispatcherMixin",
     "LevelMixin",
     "ServerLevelMixin"
   ],

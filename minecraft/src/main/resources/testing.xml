@@ -17,26 +17,53 @@
                 <PopulateAllContainersInsideOfNamedArea/>
             </Effects>
         </EnteredNamedArea>
+        <!-- Mace tutorial -->
         <EnteredNamedArea>
             <Trigger>
                 <All>
                     <CurrentNamedArea>maceArea</CurrentNamedArea>
+                    <Not><PreviousNamedArea>maceBottomArea</PreviousNamedArea></Not>
                     <NotRunningAlready/>
                 </All>
             </Trigger>
             <Effects>
                 <DialogSequence>
                     <Dialog>
-                        yo person that made the mace tutorial
+                        There are some Maces in this area's chest.
                     </Dialog>
                     <Delay/>
                     <AppendToDialog>
-                        please add a tutorial here
+                        Press {y} to learn more about Maces.
+                        Press {n} if you already know about Maces.
                     </AppendToDialog>
+                    <ProceedCancel>
+                        <Cancel>
+                            <ExitDialogSequence/>
+                        </Cancel>
+                    </ProceedCancel>
+                    <Dialog>Maces are weapons that use downward momentum to slam your opponent. Maces can receive a variety of useful enchantments to power you up.</Dialog>
                     <Delay/>
                     <ContinueText/>
                     <ProceedCancel/>
-                    <CloseDialog/>
+                    <Dialog>Maces get more effective the higher you fall from. Landing a hit deals massive damage and cancels any fall damage you would have taken, but missing a hit can be catastrophic.</Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <Dialog>You can craft a Mace by placing a Heavy Core on top of a Breeze Rod.</Dialog>
+                    <Delay/>
+                    <ContinueText/>
+                    <ProceedCancel/>
+                    <Dialog>In front of you is a large hole, you can spawn an armor stand to use as target practice.</Dialog>
+                    <Delay/>
+                    <AppendToDialog>Press the stone button to continue.</AppendToDialog>
+                    <WaitForOnAction>
+                        <EnteredNamedArea>
+                            <Trigger>
+                                <CurrentNamedArea>maceBottomArea</CurrentNamedArea>
+                            </Trigger>
+                        </EnteredNamedArea>
+                    </WaitForOnAction>
+                    <Dialog>IT WORKED!</Dialog>
                 </DialogSequence>
             </Effects>
         </EnteredNamedArea>

@@ -56,4 +56,4 @@ jobs:
         with:
           name: legacy4j-combat-zones-${{steps.get-branch.outputs.branch}}-${{steps.get-build-hash.outputs.id}}
           path: |
-            '*/build/libs/'
+            */build/libs/

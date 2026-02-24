@@ -26,6 +26,7 @@ on:
 jobs:
   build:
 
+    # i did not know that technocality was a runner
     runs-on: technocality
 
     steps:

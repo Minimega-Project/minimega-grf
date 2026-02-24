@@ -71,6 +71,8 @@
                                 <Any>
                                     <InteractionBlockPosition>-61,76,17</InteractionBlockPosition>
                                     <InteractionBlockPosition>-61,76,27</InteractionBlockPosition>
+                                    <InteractionBlockPosition>-59,76,17</InteractionBlockPosition>
+                                    <InteractionBlockPosition>-59,76,27</InteractionBlockPosition>
                                 </Any>
                             </Trigger>
                         </BlockActivated>

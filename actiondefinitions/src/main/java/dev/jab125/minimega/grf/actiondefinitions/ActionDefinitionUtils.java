@@ -126,6 +126,11 @@ public class ActionDefinitionUtils {
 				return false;
 			}
 
+			@Override
+			public void showItemInDialog(String text) {
+
+			}
+
 			//			@Override
 //			public void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel) {
 //				Scanner scanner = new Scanner(System.in);

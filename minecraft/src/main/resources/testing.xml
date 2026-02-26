@@ -40,6 +40,7 @@
                     <Dialog>
                         There are some Maces in this area's chest.
                     </Dialog>
+                    <ShowItemInDialog>minecraft:mace</ShowItemInDialog>
                     <Delay/>
                     <AppendToDialog>
                         Press {y} to learn more about Maces.
@@ -186,6 +187,7 @@
                     <Dialog>
                         This area will teach you all about Conduits.
                     </Dialog>
+                    <ShowItemInDialog>minecraft:conduit</ShowItemInDialog>
                     <Delay/>
                     <AppendToDialog>
                         Press {y} to learn more about Conduits.

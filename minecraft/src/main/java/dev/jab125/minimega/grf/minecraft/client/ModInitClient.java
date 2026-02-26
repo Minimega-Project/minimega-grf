@@ -54,6 +54,7 @@ import dev.jab125.minimega.grf.minecraft.GRFStreamCodecs;
 import dev.jab125.minimega.grf.minecraft.ServerLevelExtension;
 import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
 import dev.jab125.minimega.grf.minecraft.networking.GameRuleFilePayload;
+import dev.jab125.minimega.grf.minecraft.networking.ShowItemInDialogPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
@@ -76,6 +77,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.w3c.dom.Document;
@@ -96,6 +98,7 @@ import static dev.jab125.minimega.grf.minecraft.ModInit.fromNamedArea;
 public class ModInitClient implements ClientModInitializer {
 	public static __ROOT__ currentDimensionGrf;
 	public static Component currentTutorialMessage;
+	public static ItemStack currentDisplayedItem;
 	@Override
 	public void onInitializeClient() {
 		RenderStateDataKey<List<NamedArea>> namedAreasDataKey = RenderStateDataKey.create(() -> "Named Areas Data Key");
@@ -121,9 +124,14 @@ public class ModInitClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(DialogPayload.TYPE, (payload, context) -> {
 			if (!payload.append()) {
 				currentTutorialMessage = payload.message().orElse(null);
+				currentDisplayedItem = null;
 			} else {
 				currentTutorialMessage = currentTutorialMessage == null ? payload.message().orElseThrow() : currentTutorialMessage.copy().append("\n").append(payload.message().orElseThrow());
 			}
+		});
+
+		ClientPlayNetworking.registerGlobalReceiver(ShowItemInDialogPayload.TYPE, (payload, context) -> {
+			currentDisplayedItem = payload.message().orElse(null);
 		});
 
 		HudElementRegistry.addLast(Identifier.parse("minimega_grf_minecraft:tutorial"), new HudElement() {
@@ -132,16 +140,25 @@ public class ModInitClient implements ClientModInitializer {
 				if (currentTutorialMessage == null) return;
 				Component text = currentTutorialMessage;
 				List<FormattedCharSequence> split = Minecraft.getInstance().font.split(text, 168);
-				int width = context.guiWidth();
-				int height = context.guiHeight();
-				context.fill(width - 180, 30, width - 10, 30+split.size() * Minecraft.getInstance().font.lineHeight + 4, 0x55000000);
+				int guiWidth = context.guiWidth();
+				int width = 180;//context.guiWidth();
+				int height = split.size() * Minecraft.getInstance().font.lineHeight + 4;//context.guiHeight();
+				int y = 30;
+				int x = guiWidth - width - 5;
+				//int width = 180;
+				if (currentDisplayedItem != null) height += 16;
+				context.fill(x, y, x + width, y+height, 0x55000000);
 				//context.drawString(Minecraft.getInstance().font, "Tutorial Text", width - 158, 32, 0xffffffff);
 
 				int i = 0;
 
 				for (FormattedCharSequence formattedCharSequence : split) {
-					context.drawString(Minecraft.getInstance().font, formattedCharSequence, width - 178, 32 + i, 0xffffffff);
+					context.drawString(Minecraft.getInstance().font, formattedCharSequence, x + 5, y + 2 + i, 0xffffffff);
 					i+=Minecraft.getInstance().font.lineHeight;
+				}
+
+				if (currentDisplayedItem != null) {
+					context.renderFakeItem(currentDisplayedItem, x + width / 2 - 8, y + 2 + i);
 				}
 			}
 		});

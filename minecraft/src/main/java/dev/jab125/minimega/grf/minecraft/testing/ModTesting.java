@@ -67,6 +67,7 @@ import dev.jab125.minimega.grf.element.PopulateContainer;
 import dev.jab125.minimega.grf.minecraft.ModInit;
 import dev.jab125.minimega.grf.minecraft.event.Events;
 import dev.jab125.minimega.grf.minecraft.networking.DialogPayload;
+import dev.jab125.minimega.grf.minecraft.networking.ShowItemInDialogPayload;
 import it.unimi.dsi.fastutil.Pair;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -371,6 +372,29 @@ public class ModTesting implements ModInitializer {
 		@Override
 		public boolean isInteractionBlockPosition(int x, int y, int z) {
 			return interactionPosition != null && interactionPosition.getX() == x && interactionPosition.getY() == y && interactionPosition.getZ() == z;
+		}
+
+		@Override
+		public void showItemInDialog(String text) {
+			// TODO exceptions?
+			ItemParser itemParser = new ItemParser(player.registryAccess());
+			ItemParser.ItemResult parse;
+			try {
+				parse = itemParser.parse(new StringReader(text));
+			} catch (CommandSyntaxException e) {
+				throw new RuntimeException(e);
+			}
+			ItemStack itemStack;
+			try {
+				itemStack = new ItemInput(parse.item(), parse.components()).createItemStack(1, false);
+			} catch (CommandSyntaxException e) {
+				throw new RuntimeException(e);
+			}
+			if (ServerPlayNetworking.canSend(player, ShowItemInDialogPayload.TYPE)) {
+				ServerPlayNetworking.send(player, new ShowItemInDialogPayload(Optional.of(itemStack)));
+			} else {
+				player.sendSystemMessage(Component.empty().append(itemStack.getDisplayName()).withStyle(current));
+			}
 		}
 	}
 }

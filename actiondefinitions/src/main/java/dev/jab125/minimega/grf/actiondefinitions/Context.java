@@ -70,5 +70,7 @@ public interface Context {
 	void setCurrentRuntime(ActionRuntime runtime);
 
 	boolean isInteractionBlockPosition(int x, int y, int z);
+
+	void showItemInDialog(String text);
 	//void userInput(Optional<Proceed> proceed, Optional<Cancel> cancel);
 }

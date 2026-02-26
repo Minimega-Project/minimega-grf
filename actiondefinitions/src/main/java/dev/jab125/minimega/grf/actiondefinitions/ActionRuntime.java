@@ -13,6 +13,7 @@ import dev.jab125.minimega.grf.actiondefinitions.element.Log;
 import dev.jab125.minimega.grf.actiondefinitions.element.OnAction;
 import dev.jab125.minimega.grf.actiondefinitions.element.PopulateAllContainersInsideOfNamedArea;
 import dev.jab125.minimega.grf.actiondefinitions.element.ProceedCancel;
+import dev.jab125.minimega.grf.actiondefinitions.element.ShowItemInDialog;
 import dev.jab125.minimega.grf.actiondefinitions.element.StopAll;
 import dev.jab125.minimega.grf.actiondefinitions.element.WaitForOnAction;
 import dev.jab125.minimega.grf.element.Element;
@@ -98,6 +99,9 @@ public class ActionRuntime {
 						this.awaitingUserInput = true;
 						this.proceedCancel = proceedCancel;
 						return true;
+					}
+					case ShowItemInDialog showItemInDialog -> {
+						context.showItemInDialog(showItemInDialog.text);
 					}
 					case StopAll ignored -> {
 						context.replaceDialogWith(null);

@@ -33,6 +33,7 @@ public class ActionDefinitionsElementRegistry extends ElementRegistry {
 		register("PreviousNamedArea", new PreviousNamedArea.Type());
 		register("Proceed", new Proceed.Type());
 		register("ProceedCancel", new ProceedCancel.Type());
+		register("ShowItemInDialog", new ShowItemInDialog.Type());
 		register("StopAll", new StopAll.Type());
 		register("Trigger", new Trigger.Type());
 		register("WaitForOnAction", new WaitForOnAction.Type());
